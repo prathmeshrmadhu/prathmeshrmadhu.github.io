@@ -34,8 +34,30 @@ This is my first blog post discussing about fastai, it's uses and why it's impor
         * Using or rather selecting features that does not create the biases on metrics based on observations. Ex: Evan Estola's meetup idea
     * Bias
         * Historical, Representation, Measurement, Aggregation, Evaluation, Deployment
-        * 
+        * Ailments
+            * Diverse data helps Aggregation bias, but no help to historical or measurement bias
+            * proper documentation of datasets, limitations and how decisions are made using context and biases      
     * Disinformation
+    * Identifying and Addressing Ethical Issues
+        * Analyzing the project that you're working on
+            * Should we even do this?
+            * Biases in data?
+            * Code and Data -- auditable?
+            * Errors for different subgroups
+            * Accuracy of simpler algorithm
+            * Mistake and appeals handling
+            * team diversity
+        * Implement processes to find and address ethical risks
+            * Consult over assumptions 
+            * knowing/asking stake-holders interests and direct effect
+            * wrongful/unintended usage and purposes 
+        * Support good policy
+            * rights approach
+            * justice approach
+            * utilitarian approach
+            * common good approach
+            * virtue approach
+        * Increase diversity
     
     
 
