@@ -10,7 +10,7 @@ locale                   : "en-US"
 title                    : "Prathmesh R. Madhu"
 title_separator          : "-"
 name                     : &name "Prathmesh R. Madhu"
-description              : &description "PhD Researcher at Friedrich Alexander University"
+description              : &description "Vice President - Machine Learning at InFoCusp Innovations"
 url                      : https://prathmeshrmadhu.github.io # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "prathmeshrmadhu.github.io"
@@ -82,7 +82,7 @@ analytics:
 author:
   name             : "Prathmesh R. Madhu"
   avatar           : "profile_pic.jpg"
-  bio              : "PhD Researcher in Digital Humanities at Pattern Recognition Lab, Friedrich Alexander University"
+  bio              : "An AI and machine learning leader with 10+ years of experience in advanced computer vision, large language models, and agentic AI systems. He combines strong research expertise with practical product development to deliver impactful AI-driven solutions."
   location         : "Erlangen, Germany"
   employer         :
   pubmed           :
@@ -102,7 +102,7 @@ author:
   instagram        :
   impactstory      : #"https://profiles.impactstory.org/u/xxxx-xxxx-xxxx-xxxx"
   lastfm           :
-  linkedin         :
+  linkedin         : "https://www.linkedin.com/in/prathmeshrmadhu/"
   orcid            : "https://orcid.org/0000-0003-2707-415X"
   pinterest        :
   soundcloud       :
