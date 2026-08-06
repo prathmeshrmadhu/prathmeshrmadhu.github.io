@@ -59,6 +59,18 @@ Adding "Selected Work" to `_data/navigation.yml` is a structural change made in 
 
 The **permalink stays `/portfolio/`** in Phase 1 — only the page title and navigation label change to "Selected Work". Renaming the collection and its URL is a Phase 2 structural decision, and doing it now would mean either broken links or redirect handling for no immediate benefit.
 
+## Work item 0 — Site configuration (`_config.yml`)
+
+Added during planning, when a local build was first attempted.
+
+**Build blocker.** `repository` is set to `"prathmeshrmadhu.github.io"`, but `jekyll-github-metadata` requires `owner/name`. GitHub Pages masks this by supplying the value from its own environment, so the bug is invisible in production and fatal locally. Correct it to `"prathmeshrmadhu/prathmeshrmadhu.github.io"`.
+
+**Stale identity.** Three facts here are wrong or dated, and the author sidebar renders on every page:
+
+- `description` says "Vice President" and misspells the employer as "InFoCusp".
+- `author.bio` is written in the third person and leads with a years-of-experience claim.
+- `author.location` says "Erlangen, Germany"; the resume says Pune, India.
+
 ## Work item 1 — Landing page (`_pages/about.md`)
 
 Rewrite. Structure:
@@ -145,10 +157,10 @@ Optional because it is authorial work, not a correctness fix. Requires the user 
 
 Phase 1 is done when all of the following hold:
 
-1. `bundle exec jekyll build` completes without errors.
+1. A clean Jekyll build completes without errors. Ruby is not installed on this machine, so builds run in a Ruby 3.2 Docker container; see the implementation plan for the exact command.
 2. No occurrence of "Portfolio item number", "500x300", or "Ongoing" anywhere in built output.
 3. `/cv/` shows five roles, correct dates, and renders publications, talks and teaching from collections.
-4. `/` names Senior Vice President and offers two working navigation paths.
+4. `/` names Senior Vice President and offers two working navigation paths; the author sidebar shows Pune, India.
 5. "Selected Work" appears in navigation and lists two complete case studies.
 6. The four demo pages return 404.
 7. `/teaching/` includes the FAU TA role alongside the existing DAIICT and coaching entries.
