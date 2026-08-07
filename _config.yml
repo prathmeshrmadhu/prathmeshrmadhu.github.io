@@ -10,7 +10,7 @@ locale                   : "en-US"
 title                    : "Prathmesh R. Madhu"
 title_separator          : "-"
 name                     : &name "Prathmesh R. Madhu"
-description              : &description "Vice President - Machine Learning at InFoCusp Innovations"
+description              : &description "Senior Vice President - Machine Learning at Infocusp Innovations"
 url                      : https://prathmeshrmadhu.github.io # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "prathmeshrmadhu/prathmeshrmadhu.github.io"
@@ -82,8 +82,8 @@ analytics:
 author:
   name             : "Prathmesh R. Madhu"
   avatar           : "profile_pic.png"
-  bio              : "An AI and machine learning leader with 10+ years of experience in advanced computer vision, large language models, and agentic AI systems. He combines strong research expertise with practical product development to deliver impactful AI-driven solutions."
-  location         : "Erlangen, Germany"
+  bio              : "Computer vision researcher and machine learning leader. I work on problems where standard models fail — non-standard imagery, scarce labels, and tight compute budgets."
+  location         : "Pune, India"
   employer         :
   pubmed           :
   googlescholar    : "https://scholar.google.co.in/citations?user=tEe1-TYAAAAJ&hl=en"
