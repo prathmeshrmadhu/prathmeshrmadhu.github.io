@@ -11,70 +11,55 @@ redirect_from:
 
 Education
 ======
-* Ph.D in Scene understanding in Digital Humanities, Friedrich Alexander University, 2018 -- Ongoing
-* M.Tech in Information and Communication Technology (ICT), DAIICT University, 2016
-* B.E. in Electronics and Communication Engineering (EC), LD College of Engineering, 2014
+* **Ph.D., Computer Science (Computer Vision)** — Friedrich-Alexander-Universität Erlangen-Nürnberg, Dec 2018 – Nov 2022
+  * Chair of Pattern Recognition. Dissertation on scene understanding in digital humanities.
+  * Cumulative GPA: 1.3/4.0 (1.0 best)
+* **M.Tech., Information & Communication Technology** — DAIICT, Gandhinagar, Jul 2014 – May 2016
+  * Cumulative GPA: 9.23/10.0
+* **B.E., Electronics & Communication Engineering** — LD College of Engineering, Ahmedabad, 2014
 
-Work experience
+Experience
 ======
 
-Academic:
+**Senior Vice President – Machine Learning** · Infocusp Innovations, Pune · Aug 2026 – Present
+* Promoted to lead the machine learning practice, with accountability for technical direction and delivery quality across the computer vision and LLM portfolio.
+* Developing technical leads and strengthening evaluation and delivery standards across teams.
 
-* Summer 2020: Teaching Assistant, Introduction to Computer Vision
-  * Friedrich Alexander University
-  * Duties included: Conducting Programming Exercises
-  * Supervisor: Dr. Ronak Kosti
+**Vice President – Machine Learning** · Infocusp Innovations, Pune · Jan 2025 – Jul 2026
+* Led the computer vision group (10+ engineers) across multiple concurrent LLM and computer vision projects, converting open-ended client requirements into crisp project definitions, task breakdowns, and agreed success criteria.
+* Led a 4-engineer team optimising MASt3R-SLAM for drone trajectory tracking on Jetson Orin NX, delivering a ~9× inference speedup (0.26 → 2.4 FPS) under tight compute and power budgets using TensorRT and ONNX, plus adaptive retrieval that skips redundant relocalisations during turns.
+* Led a 5-engineer team building agentic AI systems for user researchers — agents that execute analysis workflows and generate reports — with LLM-as-a-judge evaluation harnesses as a first-class deliverable.
+* Delivered a production hybrid multimodal retrieval system fusing vector-indexed image and text search with keyword search, for heterogeneous visual collections where off-the-shelf embeddings fail.
+* Designed agentic health-protocol generation for a regulated domain with an auditable LLM review layer.
 
-* Summer 2015, Summer 2016: Teaching Assistant, Introduction to Communication Systems
-  * DAIICT University
-  * Duties included: Conducting Labs and Assignments.
-  * Supervisor: Professor Sanjeev Gupta
+**Technical Lead – Machine Learning** · Infocusp Innovations, Pune · Aug 2023 – Jan 2025
+* Fine-tuned TF Model Garden detection models for industrial defect inspection, achieving a 20% F1-score improvement on production data characterised by tiny targets, severe class imbalance, and few labelled failure examples; carried the work from data pipeline to customer POC.
+* Built and led a 4-person R&D team on an LLM/RAG survey-analysis platform that summarises, tags, and reports on user-research data, cutting researcher time per project by 40%, validated against human-coded baselines.
+* Translated peer-reviewed small-data techniques — transfer learning, attention-guided augmentation, one-shot detection — into repeatable delivery patterns for engagements where off-the-shelf models plateau.
 
-* Winter 2015: Teaching Assistant, Introduction to Linear Algebra
-  * DAIICT University
-  * Duties included: Teaching and Discussing Exercises, Tutorials and Assignments.
-  * Supervisor: Professor Jaideep Mulherkar
+**PhD Researcher** · Friedrich-Alexander-Universität Erlangen-Nürnberg · Dec 2018 – Jun 2023
+* Pioneered ICC and ICC++, explainable feature learning methods leveraging human pose to uncover semantics and link iconography across image datasets.
+* Enhanced pose estimation in ancient Greek vase paintings through style transfer and a perceptual metric, and improved one-shot object detection for heterogeneous artwork images using data contextualisation strategies.
+* Improved classification performance for breast calcification analysis using histogram equalisation.
 
-* Winter 2014: Teaching Assistant, Calculus
-  * DAIICT University
-  * Duties included: Teaching and Discussing Exercises, Tutorials and Assignments.
-  * Supervisor: Professor V. Sunitha
-
-Professional:
-
-* July, 2016 to November, 2018, Machine Learning Engineer
-* Where: InFoCusp Innovations Pvt. Ltd.
-* Major Projects:
-  * Anglr: Anglr Tracker is a device mounted on a fishing rod that automatically tracks every fishing
-           activity into a digital logbook for a better fishing experience. My role was to observe,
-           analyze and clean the data. After the data processing steps, I made various fishing activity
-           detection models in python (for development) and C (for deployment) for various fishing
-           activities and finally did verification and validation testing.
-  * DeepDive: DeepDive was a project that involved visualization and understanding of Convolutional
-              neural networks (CNN). The outcome of the project was an open-source tool called
-              ['tf-cnnvis'](https://github.com/InFoCusp/tf_cnnvis) that helped users visualize CNNs in a
-              better way. My role was to discuss and brainstorm ideas with the team. I used to help solve
-              bugs and analysis once the ideas were developed.
-  * SniperAI: Sniper AI is a tool using artificial intelligence for recruitment. It uses machine learning
-              to match CVs and job specifications. My role was to design the algorithm, deliver then
-              implementation solution and make it scalable for large amount of data for concurrent
-              access to multiple users. I also designed and implemented an automated test-bench for
-              objective evaluation of various algorithm metrics. I also did substantial manual testing
-              on the developed algorithms for subjective testing.
+**Machine Learning Engineer** · Infocusp Innovations, Ahmedabad · Jul 2016 – Nov 2018
+* Designed and deployed an enterprise candidate recommendation system processing 1M candidates daily to optimise hiring across multiple job positions.
+* Led end-to-end development of a scalable hiring infrastructure using Python, PySpark and AWS, supporting concurrent multi-user access.
+* Designed and implemented algorithms for reel, jerk, jigging and catch detection from fishing-rod sensor data — Python for development, C for deployment — with verification and validation testing.
+* Contributed to [tf-cnnvis](https://github.com/InFoCusp/tf_cnnvis), an open-source CNN visualisation tool.
 
 Skills
 ======
-* Machine / Deep learning based modeling
-* python
-  * keras, pytorch, fastai, tensorflow
-  * pandas, numpy, sklearn, matplotlib, nltk
-* C, MATLAB
-* [Basic] Apache pyspark, Hadoop, AWS
-* LaTeX
+* **Programming languages:** Python, C
+* **AI/ML frameworks:** TensorFlow, PyTorch, Scikit-learn, OpenCV, Hugging Face, Transformers, ONNX, TensorRT
+* **Technologies:** Prompt engineering, Docker, CI/CD (GitHub Actions, Jenkins)
+* **Tools:** Git, VSCode, Pandas, NumPy, IceVision, LangChain, LlamaIndex, Tensorboard, JupyterLab, Streamlit
+* **Databases:** ElasticSearch, FAISS, TFRecords, Protobuf
+* **Cloud:** AWS (EC2, S3, Lambda, SageMaker), GCP
 
-<!-- Publications
+Publications
 ======
-  <ul>{% for post in site.publications %}
+  <ul>{% for post in site.publications reversed %}
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
 
@@ -86,10 +71,6 @@ Talks
 
 Teaching
 ======
-  <ul>{% for post in site.teaching %}
+  <ul>{% for post in site.teaching reversed %}
     {% include archive-single-cv.html %}
-  {% endfor %}</ul> -->
-
-<!-- Service and leadership
-======
-* Currently signed into 5 different slack teams -->
+  {% endfor %}</ul>
