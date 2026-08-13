@@ -72,11 +72,17 @@ Card-internal values, measured against the white card face `#ffffff`:
 
 `$header-font-family: $serif` (`Georgia, Times, serif` — already defined in `_variables.scss`). This flows to all `h1`–`h6` via `_sass/_base.scss:27`.
 
-Three sites hardcode `$sans-serif-narrow` and would otherwise remain sans while everything else turned serif. Each needs a one-line change to `$serif`:
+Three sites hardcode a sans variable and would otherwise remain sans while everything else turned serif:
 
-- `_sass/_masthead.scss:18` — site title
-- `_sass/_sidebar.scss:34` — author name
-- `_sass/_archive.scss:44` — `.archive__item-title` (this is what makes publication titles serif)
+| Location | Selector | Current | Change |
+|---|---|---|---|
+| `_sass/_masthead.scss:47` | `.masthead__menu-item--lg` | inherits `$sans-serif-narrow` from `&__inner-wrap` | **add** `font-family: $serif;` |
+| `_sass/_sidebar.scss:120` | `.sidebar .author__name` | `$sans-serif` | → `$serif` |
+| `_sass/_archive.scss:44` | `.archive__item-title` | `$sans-serif-narrow` | → `$serif` |
+
+The masthead must be changed at `.masthead__menu-item--lg` — the `li` carrying `{{ site.title }}` in `_includes/masthead.html:10` — **not** at `.masthead__inner-wrap` (line 18). That wrap encloses the nav `<ul>` as well, so setting it there would turn the nav links serif too, contradicting the rule below.
+
+Likewise the sidebar must be changed at `.sidebar .author__name` (specificity 0,2,0), not at the blanket `.sidebar h2, h3, …` rule on line 34 (0,1,1) which it already overrides.
 
 Nav links, footer and body copy stay sans-serif. The rule: serif for things that are *named*, sans for things that are *operated*.
 
@@ -88,8 +94,8 @@ Nav links, footer and body copy stay sans-serif. The rule: serif for things that
 | `_sass/_cards.scss` | create | `.wgrid` and `.wcard` only |
 | `assets/css/main.scss` | modify | add `@import "cards";` after `"archive"` |
 | `_sass/_archive.scss` | modify | list restyle; `.archive__item-title` to serif |
-| `_sass/_masthead.scss` | modify | line 18 to `$serif` |
-| `_sass/_sidebar.scss` | modify | line 34 to `$serif` |
+| `_sass/_masthead.scss` | modify | `.masthead__menu-item--lg` gains `$serif` |
+| `_sass/_sidebar.scss` | modify | line 120 `.sidebar .author__name` to `$serif` |
 | `_includes/work-card.html` | create | render one case-study card |
 | `_pages/work.html` | modify | one line: swap the include |
 | `_pages/research.html` | modify | group publications by year |
