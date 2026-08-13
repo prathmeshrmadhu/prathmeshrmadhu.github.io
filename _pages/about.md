@@ -18,10 +18,10 @@ The through-line across both halves of my work: I take on problems where standar
 
 ## Where to go next
 
-* **[Selected work](/portfolio/)** — what I've built, and what it measurably did
-* **[Research](/publications/)** — publications, [talks](/talks/), and [teaching](/teaching/)
+* **[Selected work](/work/)** — what I've built, and what it measurably did
+* **[Research](/research/)** — publications, talks, and teaching
 
-Outside of that, I'm fascinated by mathematics and drawn to problems built on it. I also [write occasionally](/year-archive/) about work, focus, and how this field keeps changing.
+Outside of that, I'm fascinated by mathematics and drawn to problems built on it. I also [write occasionally](/blog/) about work, focus, and how this field keeps changing.
 
 *Cogito, ergo sum.* — René Descartes
 
