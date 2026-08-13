@@ -29,7 +29,7 @@ $calisto                    : "Calisto MT", serif;
 $garamond                   : Garamond, serif;
 
 $global-font-family         : $sans-serif;
-$header-font-family         : $sans-serif;
+$header-font-family         : $serif;
 $caption-font-family        : $serif;
 
 /* type scale */
@@ -53,12 +53,16 @@ $darker-gray                : mix(#000, $gray, 60%);
 $light-gray                 : mix(#fff, $gray, 50%);
 $lighter-gray               : mix(#fff, $gray, 90%);
 
-$body-color                 : #fff;
-$background-color           : #fff;
-$code-background-color      : #fafafa;
+$body-color                 : #faf8f3;
+$background-color           : #faf8f3;
+$code-background-color      : #f4f1e8;
 $code-background-color-dark : $light-gray;
-$text-color                 : $dark-gray;
-$border-color               : $lighter-gray;
+$text-color                 : #4c4a41;
+$border-color               : #e4dfd2;
+
+/* Phase 3 palette additions — these do not exist in Minimal Mistakes */
+$muted-color                : #6a675e;  /* 5.33:1 on #faf8f3 */
+$accent-color               : #b8860b;  /* 3.07:1 — DECORATION ONLY, never text */
 
 $primary-color              : #7a8288;
 $success-color              : #62c462;
@@ -90,11 +94,11 @@ $xing-color                 : #006567;
 
 
 /* links */
-$link-color                 : $info-color;
+$link-color                 : #8a6508;
 $link-color-hover           : mix(#000, $link-color, 25%);
 $link-color-visited         : mix(#fff, $link-color, 25%);
-$masthead-link-color        : $primary-color;
-$masthead-link-color-hover  : mix(#000, $primary-color, 25%);
+$masthead-link-color        : #4c4a41;
+$masthead-link-color-hover  : #8a6508;
 
 
 /*
