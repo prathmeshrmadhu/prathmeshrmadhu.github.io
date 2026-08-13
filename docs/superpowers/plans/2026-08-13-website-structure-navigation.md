@@ -4,7 +4,7 @@
 
 **Goal:** Collapse six flat nav items into four coherent sections, rename every URL to match its label with redirects behind it, and delete the unused theme scaffolding.
 
-**Architecture:** Pure Jekyll content and config edits — no new infrastructure. Publications, Talks, and Teaching merge into one `_pages/research.md` that keeps rendering from the same collections, so it cannot drift from `/cv/`. Old URLs survive as `jekyll-redirect-from` entries on the new pages. Verification is a Dockerised Jekyll build plus string and count checks against the built output in `_site`.
+**Architecture:** Pure Jekyll content and config edits — no new infrastructure. Publications, Talks, and Teaching merge into one `_pages/research.html` that keeps rendering from the same collections, so it cannot drift from `/cv/`. Old URLs survive as `jekyll-redirect-from` entries on the new pages. Verification is a Dockerised Jekyll build plus string and count checks against the built output in `_site`.
 
 **Tech Stack:** Jekyll 3.10 via the `github-pages` gem, Academic Pages / Minimal Mistakes theme, Liquid, `jekyll-redirect-from`, Docker (Ruby is not installed locally).
 
@@ -52,7 +52,13 @@ Gems are cached in the `jekyll_gems` named volume, so a build takes about 8 seco
 
 **Why 26 and not 27:** Task 5 deletes one teaching entry, taking Teaching from 3 to 2.
 
-**A note on Liquid includes inside a markdown page.** `_pages/research.md` will call `archive-single.html` and `archive-single-talk.html`, both of which emit deeply indented HTML. That is safe: both includes open with `<div class="…__item">` at column 0, and kramdown treats a block-level HTML element as raw HTML without parsing its indented contents as a code block. This is not a new risk — `_pages/publications.md` already does exactly this and renders correctly in production.
+**The Research page must be `.html`, not `.md`.** This was found the hard way during execution — the original plan said `.md` and that produced broken output.
+
+`archive-single-talk.html` ends with `{% if post.excerpt %}<p …>{{ post.excerpt | markdownify }}</p>{% endif %}`. `markdownify` emits a trailing blank line *inside* the surrounding `<div>`. In a markdown page, a blank line terminates kramdown's raw-HTML block, so the include's own closing `</article>` and `</div>` are then parsed as markdown text and escaped to `&lt;/article&gt;` — malformed DOM, one per talk. Worse, everything after that point stops being treated as markdown, so a following `## Teaching` heading survives into the output as literal text.
+
+Writing the page as `.html` avoids kramdown entirely, which is exactly the context the old `_pages/talks.html` had. Consequences for this plan: the framing prose is written as `<p>` elements, and the three section headings are written as explicit `<h2 id="…" class="archive__subtitle">` rather than relying on kramdown auto-ids.
+
+`_pages/publications.md` and `_pages/teaching.html` were both safe in either context because `archive-single.html` does not markdownify an excerpt in a way that breaks the block. `/cv/` is also unaffected — it uses `archive-single-talk-cv.html`, verified to emit 0 escaped tags.
 
 ---
 
@@ -278,12 +284,12 @@ Do not proceed to Task 4 until the text is approved. There is no commit in this 
 ### Task 4: Create `/research/` and retire the three pages it replaces
 
 **Files:**
-- Create: `_pages/research.md`
+- Create: `_pages/research.html`
 - Delete: `_pages/publications.md`, `_pages/talks.html`, `_pages/teaching.html`, `/tmp/research-framing.md`
 
-- [ ] **Step 1: Create `_pages/research.md`**
+- [ ] **Step 1: Create `_pages/research.html`**
 
-Use the approved framing text from Task 3 in place of the four paragraphs below if the user changed it.
+Use the approved framing text from Task 3. This is the file as actually built and verified:
 
 ```liquid
 ---
@@ -299,36 +305,38 @@ redirect_from:
 
 {% include base_path %}
 
-My doctoral work, at the [Chair of Pattern Recognition](https://lme.tf.fau.de/) at FAU Erlangen-Nürnberg, asked what happens to computer vision when you point it at images that were never photographs. The dissertation — *Concepts to Computational Constructs: Advanced Scene Understanding for Heterogeneous Artworks Using Deep Learning* — worked across art history, classical archaeology, and Christian archaeology, where the objects of study are paintings, vase decorations, and iconographic programmes rather than camera output.
+<p>My doctoral work, at the <a href="https://lme.tf.fau.de/">Chair of Pattern Recognition</a> at FAU Erlangen-Nürnberg, asked what happens to computer vision when you point it at images that were never photographs. The dissertation — <em>Concepts to Computational Constructs: Advanced Scene Understanding for Heterogeneous Artworks Using Deep Learning</em> — worked across art history, classical archaeology, and Christian archaeology, where the objects of study are paintings, vase decorations, and iconographic programmes rather than camera output.</p>
 
-That distinction is not cosmetic. Detection and pose estimation models inherit their priors from photographic data, so they fail on artwork in ways that are specific and instructive: a figure on an ancient vase is rendered by convention, not by projection. Labels are scarce, because producing them requires an art historian. And an art historian has no use for a prediction they cannot interrogate.
+<p>That distinction is not cosmetic. Detection and pose estimation models inherit their priors from photographic data, so they fail on artwork in ways that are specific and instructive: a figure on an ancient vase is rendered by convention, not by projection. Labels are scarce, because producing them requires an art historian. And an art historian has no use for a prediction they cannot interrogate.</p>
 
-Those three constraints shaped the work — pose estimation on vase paintings through perceptually-grounded style transfer, one-shot detection for heterogeneous artwork collections, and ICC and ICC++, which learn image composition as an explainable feature. The point of the latter was to recover the compositional structures art historians already reason about, in a form that lets them check the machine's reasoning against their own.
+<p>Those constraints shaped the work — pose estimation on vase paintings through perceptually-grounded style transfer, one-shot detection for heterogeneous artwork collections, and ICC and ICC++, which learn image composition as an explainable feature. The point of the latter was to recover the compositional structures art historians already reason about, in a form that lets them check the machine's reasoning against their own.</p>
 
-The same three constraints recur across the rest of my publications: olfactory object recognition for the Odeuropa project, and mammography and cytology work where annotation is expensive and an unexplainable classifier is unusable.
+<p>I was also part of the computer vision team on <a href="https://odeuropa.eu/odeuropa-team/">Odeuropa</a>, a European research project on olfactory heritage, where the vision problem was to find references to smell in historical images — the objects that carry scent, and the people caught in the act of smelling. That work produced the ODOR dataset for olfactory object detection, SniffyArt for smelling persons, and the ODOR challenge at ICPR 2022. The targets are small, densely packed, and scattered across the frame, which makes olfactory reference detection a genuinely hard detection problem quite apart from its interest to historians.</p>
 
-## Publications
+<p>A separate thread runs through medical imaging: quantifying pulmonary hemosiderophages in cytology slides, and a series of mammography papers on breast density, luminal subtype, calcification, and abnormality classification in contrast-enhanced spectral mammography. The methods there are transfer learning and augmentation — attention-guided erasing, random histogram equalization, and a neighbourhood representation loss.</p>
 
-For the full list of academic publications, check out my [official-webpage](https://lme.tf.fau.de/person/madhu/), [Google Scholar](https://scholar.google.co.in/citations?user=tEe1-TYAAAAJ&hl=en) profile.
+<h2 id="publications" class="archive__subtitle">Publications</h2>
+
+<p>For the full list of academic publications, check out my <a href="https://lme.tf.fau.de/person/madhu/">official-webpage</a>, <a href="https://scholar.google.co.in/citations?user=tEe1-TYAAAAJ&amp;hl=en">Google Scholar</a> profile.</p>
 
 {% for post in site.publications reversed %}
   {% include archive-single.html %}
 {% endfor %}
 
-## Talks
+<h2 id="talks" class="archive__subtitle">Talks</h2>
 
 {% for post in site.talks reversed %}
   {% include archive-single-talk.html %}
 {% endfor %}
 
-## Teaching
+<h2 id="teaching" class="archive__subtitle">Teaching</h2>
 
 {% for post in site.teaching reversed %}
   {% include archive-single.html %}
 {% endfor %}
 ```
 
-Three things carried over deliberately: the publications intro line is verbatim from `_pages/publications.md` (it is the only prose on any of the merged pages); Talks uses `archive-single-talk.html` while the other two use `archive-single.html`, which is correct because the talk include renders venue and date differently; and all three loops keep `reversed`.
+Four things are deliberate. The page is `.html` for the kramdown reason given in the verification-loop section above. The headings carry explicit `id` and `class="archive__subtitle"` because there is no kramdown to auto-generate them. The publications intro line is verbatim from `_pages/publications.md` — the only prose on any of the merged pages — with its `&` escaped to `&amp;` now that it is raw HTML. And Talks uses `archive-single-talk.html` while the other two use `archive-single.html`, which is correct: the talk include renders venue and date differently. All three loops keep `reversed`.
 
 - [ ] **Step 2: Delete the three replaced pages and the scratch draft**
 
@@ -376,7 +384,7 @@ Expected: each prints a URL ending `/research/`.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add _pages/research.md
+git add _pages/research.html
 git commit -m "Merge publications, talks, and teaching into a framed /research/ page"
 ```
 

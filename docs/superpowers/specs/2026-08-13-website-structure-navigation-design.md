@@ -43,12 +43,12 @@ Individual entry pages are untouched. All 21 publications, 6 case studies, 3 tal
 ### File structure
 
 **Create:**
-- `_pages/research.md` — framing paragraph plus three collection sections
+- `_pages/research.html` — framing prose plus three collection sections (must be `.html`, see below)
 - `_pages/work.html` — renamed from `portfolio.html`, with sorted loop
 - `_pages/blog.html` — renamed from `year-archive.html`
 
 **Delete:**
-- `_pages/publications.md`, `_pages/talks.html`, `_pages/teaching.html` (merged into `research.md`)
+- `_pages/publications.md`, `_pages/talks.html`, `_pages/teaching.html` (merged into `research.html`)
 - `_pages/portfolio.html`, `_pages/year-archive.html` (replaced by renames)
 - `_pages/category-archive.html`, `_pages/tag-archive.html`, `_pages/page-archive.html`, `_pages/collection-archive.html`, `_pages/sitemap.md`, `_pages/talkmap.html`
 - `talkmap/` directory, `talkmap.py`, `talkmap.ipynb`
