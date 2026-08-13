@@ -3,6 +3,8 @@ title: "Real-time visual SLAM on edge hardware"
 excerpt: "A state-of-the-art SLAM pipeline taken from 0.26 to 2.4 FPS on a Jetson Orin NX — a ~9× speedup under strict power and compute limits."
 collection: portfolio
 order: 1
+result: "9× faster inference"
+tags: [TensorRT, ONNX, Jetson Orin NX, PyTorch]
 ---
 
 **Context** — A drone analytics team needed visual SLAM for trajectory tracking, running on the aircraft rather than in the cloud.

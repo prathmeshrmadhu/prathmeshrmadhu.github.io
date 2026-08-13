@@ -3,6 +3,8 @@ title: "LLM survey analysis at research scale"
 excerpt: "An LLM/RAG platform for user-research teams that cut analysis time per project by 40%, measured against human-coded baselines."
 collection: portfolio
 order: 5
+result: "−40% analysis time"
+tags: [RAG, LangChain, FAISS]
 ---
 
 **Context** — A user research and insights team was drowning in open-ended survey responses. Analysts read, coded, and tagged thousands of free-text answers by hand for every study.

@@ -3,6 +3,8 @@ title: "Hybrid multimodal retrieval for visual collections"
 excerpt: "Search across a heterogeneous image collection by fusing vector-indexed image and text embeddings with keyword search."
 collection: portfolio
 order: 4
+result_note: "Shipped to production"
+tags: [FAISS, ElasticSearch, Transformers]
 ---
 
 **Context** — A large, heterogeneous collection of images and accompanying text that people needed to search meaningfully, not just browse.

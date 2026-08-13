@@ -3,6 +3,8 @@ title: "Defect detection where models plateau"
 excerpt: "A 20% F1 improvement on production inspection data defined by tiny targets, severe class imbalance, and almost no labelled failures."
 collection: portfolio
 order: 2
+result: "+20% F1 score"
+tags: [TensorFlow, TF Model Garden, OpenCV]
 ---
 
 **Context** — An industrial manufacturer inspecting parts on a production line, where the defects that matter occupy a handful of pixels in a high-resolution frame.
