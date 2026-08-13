@@ -195,6 +195,7 @@ The body — the year-grouping Liquid — stays exactly as it is. Replace the fr
 layout: archive
 permalink: /blog/
 title: "Blog posts"
+author_profile: true
 redirect_from:
   - /year-archive/
   - /wordpress/blog-posts/
@@ -203,7 +204,7 @@ redirect_from:
 
 `/wordpress/blog-posts/` is an **existing** redirect that the old file already declared. Dropping it would break a URL that currently resolves. Carry it over.
 
-Note this file has no `author_profile` key and did not have one before. Do not add one; sidebar decisions are Phase 3.
+`author_profile: true` was already on this file and is preserved. Sidebar decisions are Phase 3, so it is not touched either way.
 
 - [ ] **Step 3: Rebuild clean and verify**
 
