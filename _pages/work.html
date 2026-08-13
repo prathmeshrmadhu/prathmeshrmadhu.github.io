@@ -10,6 +10,8 @@ redirect_from:
 {% include base_path %}
 
 {% assign ordered_work = site.portfolio | sort: 'order' %}
+<div class="wgrid">
 {% for post in ordered_work %}
-  {% include archive-single.html %}
+  {% include work-card.html %}
 {% endfor %}
+</div>
