@@ -1,7 +1,9 @@
 ---
 title: 'Rest in Peace, Banerjee Sir.'
 date: 2020-07-12
-permalink: /posts/2012/08/rip-banerjee-sir/
+permalink: /posts/2020/07/12/rip-banerjee-sir/
+redirect_from:
+  - /posts/2012/08/rip-banerjee-sir/
 tags:
   - personal
 ---
