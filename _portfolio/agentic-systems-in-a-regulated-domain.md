@@ -2,6 +2,7 @@
 title: "Agentic generation in a regulated domain"
 excerpt: "Health-protocol generation with an LLM-as-a-judge review layer, built so that every output can be audited rather than trusted."
 collection: portfolio
+order: 3
 ---
 
 **Context** — Generating health protocols in a domain where the output is subject to review, and where being wrong carries consequences beyond a bad user experience.

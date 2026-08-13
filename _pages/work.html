@@ -1,14 +1,15 @@
 ---
 layout: archive
 title: "Selected Work"
-permalink: /portfolio/
+permalink: /work/
 author_profile: true
+redirect_from:
+  - /portfolio/
 ---
 
 {% include base_path %}
 
-
-{% for post in site.portfolio %}
+{% assign ordered_work = site.portfolio | sort: 'order' %}
+{% for post in ordered_work %}
   {% include archive-single.html %}
 {% endfor %}
-

@@ -2,6 +2,7 @@
 title: "tf-cnnvis — seeing inside a convolutional network"
 excerpt: "An open-source CNN visualisation library for TensorFlow, now past 750 stars and 200 forks."
 collection: portfolio
+order: 6
 ---
 
 **Context** — An open-source project at Infocusp, built while I was a machine learning engineer there. Unlike the rest of the work on this page, it is public: [github.com/InFoCusp/tf_cnnvis](https://github.com/InFoCusp/tf_cnnvis).
