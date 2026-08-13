@@ -130,21 +130,30 @@ to:
   location         : "Pune, India"
 ```
 
-- [ ] **Step 3: Rebuild and verify**
+- [ ] **Step 3: Exclude planning docs from the build**
 
-```bash
-jbuild && grep -c "Senior Vice President" _site/index.html
+The `docs/` directory holds this plan and its spec. Jekyll copies it into `_site/`, which would publish both documents at `prathmeshrmadhu.github.io/docs/`. Add `docs` to the `exclude` list in `_config.yml` (the list beginning at line 125), keeping it alphabetically placed near `config`:
+
+```yaml
+  - config
+  - docs
+  - gulpfile.js
 ```
 
-Expected: build succeeds, count is 1 or greater.
+- [ ] **Step 4: Rebuild and verify**
 
 ```bash
-grep -c "Pune, India" _site/index.html
+rm -rf _site && jbuild
+printf 'location:      '; grep -c "Pune, India" _site/index.html
+printf 'description:   '; grep -c "Senior Vice President" _site/feed.xml
+printf 'docs excluded: '; test -d _site/docs && echo LEAKED || echo ok
 ```
 
-Expected: 1 or greater.
+Expected: location `1` or greater, description `1` or greater, docs `ok`.
 
-- [ ] **Step 4: Commit**
+Note the description is checked in `feed.xml`, not `index.html`. The theme uses the site `description` for feed metadata only; it does not render it on the homepage. (After Task 3 the phrase will also appear in `index.html`, but that comes from the about page body, not from this config value.)
+
+- [ ] **Step 5: Commit**
 
 ```bash
 git add _config.yml
@@ -652,6 +661,9 @@ echo "--- identity (expect >=1) ---"
 printf 'Senior VP on home: '; grep -c "Senior Vice President" _site/index.html
 printf 'Pune on home:      '; grep -c "Pune, India" _site/index.html
 printf 'Descartes:         '; grep -c "Cogito, ergo sum" _site/index.html
+
+echo "--- planning docs must not be published (expect ok) ---"
+test -d _site/docs && echo LEAKED || echo ok
 ```
 
 - [ ] **Step 3: Confirm no commercial content leaked in**
