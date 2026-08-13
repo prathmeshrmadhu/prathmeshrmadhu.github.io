@@ -25,8 +25,13 @@ redirect_from:
 
 <p>For the full list of academic publications, check out my <a href="https://lme.tf.fau.de/person/madhu/">official-webpage</a>, <a href="https://scholar.google.co.in/citations?user=tEe1-TYAAAAJ&amp;hl=en">Google Scholar</a> profile.</p>
 
-{% for post in site.publications reversed %}
-  {% include archive-single.html %}
+{% assign pubs = site.publications | sort: 'date' | reverse %}
+{% assign pubs_by_year = pubs | group_by_exp: "p", "p.date | date: '%Y'" %}
+{% for year in pubs_by_year %}
+  <h3 class="archive__year">{{ year.name }}</h3>
+  {% for post in year.items %}
+    {% include archive-single.html %}
+  {% endfor %}
 {% endfor %}
 
 <h2 id="talks" class="archive__subtitle">Talks</h2>

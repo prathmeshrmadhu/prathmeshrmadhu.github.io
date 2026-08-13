@@ -59,7 +59,8 @@
 
 .archive__item-excerpt {
   margin-top: 0;
-  font-size: $type-size-6;
+  font-size: 0.9em;
+  line-height: 1.5;
 
   & + p {
     text-indent: 0;
@@ -88,6 +89,20 @@
 /*
    List view
    ========================================================================== */
+
+.archive__year {
+  margin: 1.8em 0 0.6em;
+  padding-bottom: 0.25em;
+  font-family: $serif;
+  font-size: $type-size-5;
+  color: $muted-color;
+  border-bottom: 1px solid $border-color;
+}
+
+.list__item + .list__item {
+  padding-top: 1em;
+  border-top: 1px solid $border-color;
+}
 
 .list__item {
   @include breakpoint($medium) {
@@ -242,4 +257,20 @@
       }
     }
   }
+}
+
+/* Citation and venue lines inside list rows. These are unclassed <p>
+   elements emitted by _includes/archive-single.html, which this phase
+   deliberately does not modify, so they are reached positionally. */
+.list__item .archive__item > p {
+  margin: 0.2em 0 0;
+  font-size: $type-size-7;
+  color: $muted-color;
+}
+
+/* The excerpt is also a direct <p> child and would be caught above.
+   Same context, plus the element qualifier, so this wins. */
+.list__item .archive__item > p.archive__item-excerpt {
+  font-size: 0.9em;
+  color: $text-color;
 }
