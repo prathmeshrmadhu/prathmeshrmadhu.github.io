@@ -174,7 +174,14 @@ Cloud
 {: .cv-chips}
 
 ## Publications
-  <ul>{% for post in site.publications reversed %}
+
+{% assign pub_count = site.publications | size %}
+{% assign recent_pubs = site.publications | sort: 'date' | reverse %}
+
+{{ pub_count }} peer-reviewed publications. The five most recent are below; the [full list is on the research page]({{ base_path }}/research/).
+{: .cv-note}
+
+  <ul>{% for post in recent_pubs limit: 5 %}
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
 
