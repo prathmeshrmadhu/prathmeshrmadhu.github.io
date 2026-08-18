@@ -9,8 +9,7 @@ redirect_from:
 
 {% include base_path %}
 
-Education
-======
+## Education
 * **Ph.D., Computer Science (Computer Vision)** — Friedrich-Alexander-Universität Erlangen-Nürnberg, Dec 2018 – Nov 2022
   * Chair of Pattern Recognition. Dissertation on scene understanding in digital humanities.
   * Cumulative GPA: 1.3/4.0 (1.0 best)
@@ -18,8 +17,7 @@ Education
   * Cumulative GPA: 9.23/10.0
 * **B.E., Electronics & Communication Engineering** — LD College of Engineering, Ahmedabad, 2014
 
-Experience
-======
+## Experience
 
 **Senior Vice President – Machine Learning** · Infocusp Innovations, Pune · Aug 2026 – Present
 * Promoted to lead the machine learning practice, with accountability for technical direction and delivery quality across the computer vision and LLM portfolio.
@@ -48,8 +46,7 @@ Experience
 * Designed and implemented algorithms for reel, jerk, jigging and catch detection from fishing-rod sensor data — Python for development, C for deployment — with verification and validation testing.
 * Contributed to [tf-cnnvis](https://github.com/InFoCusp/tf_cnnvis), an open-source CNN visualisation tool.
 
-Skills
-======
+## Skills
 * **Programming languages:** Python, C
 * **AI/ML frameworks:** TensorFlow, PyTorch, Scikit-learn, OpenCV, Hugging Face, Transformers, ONNX, TensorRT
 * **Technologies:** Prompt engineering, Docker, CI/CD (GitHub Actions, Jenkins)
@@ -57,20 +54,17 @@ Skills
 * **Databases:** ElasticSearch, FAISS, TFRecords, Protobuf
 * **Cloud:** AWS (EC2, S3, Lambda, SageMaker), GCP
 
-Publications
-======
+## Publications
   <ul>{% for post in site.publications reversed %}
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
 
-Talks
-======
+## Talks
   <ul>{% for post in site.talks %}
     {% include archive-single-talk-cv.html %}
   {% endfor %}</ul>
 
-Teaching
-======
+## Teaching
   <ul>{% for post in site.teaching reversed %}
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
