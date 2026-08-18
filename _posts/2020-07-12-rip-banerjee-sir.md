@@ -2,6 +2,7 @@
 title: 'Rest in Peace, Banerjee Sir.'
 date: 2020-07-12
 permalink: /posts/2020/07/12/rip-banerjee-sir/
+excerpt: "Prof. Asim Banerjee was the first person I spoke to at DAIICT, on day one. A long and unhurried remembrance of six years of his scoldings, his arguments, and his ideas about what a university is for."
 redirect_from:
   - /posts/2012/08/rip-banerjee-sir/
 tags:

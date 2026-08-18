@@ -2,6 +2,7 @@
 title: 'Why fastai?'
 date: 2020-09-30
 permalink: /posts/2020/09/30/why-fastai/
+excerpt: "Notes from my first pass through fastai — why the top-down, build-something-first approach works for beginners, and the data ethics questions the course refuses to let you skip."
 tags:
   - work
 ---

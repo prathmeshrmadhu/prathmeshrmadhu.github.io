@@ -2,6 +2,7 @@
 title: 'Drinking from the Firehose: Surviving the Velocity of Information'
 date: 2026-03-31
 permalink: /posts/2026/03/31/information-overload/
+excerpt: "We keep blaming the sheer volume of information. I think the damage is done by the velocity — and the fix isn't reading less, it's putting the friction back."
 tags:
   - productivity
   - technology
