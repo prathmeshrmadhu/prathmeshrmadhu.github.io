@@ -43,7 +43,7 @@
     border-bottom: 0;
 
     a {
-      color: #1a1913;
+      color: $title-color;
       text-decoration: none;
     }
 
@@ -73,8 +73,8 @@
       padding: 0.15em 0.6em;
       font-size: $type-size-7;
       border-radius: 20px;
-      background: #f6e9c4;
-      color: #7a5b06;
+      background: $chip-background;
+      color: $chip-color;
     }
   }
 }

@@ -64,6 +64,11 @@ $border-color               : #e4dfd2;
 $muted-color                : #6a675e;  /* 5.33:1 on #faf8f3 */
 $accent-color               : #b8860b;  /* 3.07:1 — DECORATION ONLY, never text */
 
+/* Phase 3.1 — shared by _cards.scss and _cv.scss */
+$title-color                : #1a1913;  /* 16.59:1 on #faf8f3 */
+$chip-background            : #f6e9c4;
+$chip-color                 : #7a5b06;  /* 5.22:1 on $chip-background */
+
 $primary-color              : #7a8288;
 $success-color              : #62c462;
 $warning-color              : #f89406;
