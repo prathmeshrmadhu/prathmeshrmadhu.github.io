@@ -113,12 +113,65 @@ Infocusp Innovations, Ahmedabad
 * Contributed to [tf-cnnvis](https://github.com/InFoCusp/tf_cnnvis), an open-source CNN visualisation tool.
 
 ## Skills
-* **Programming languages:** Python, C
-* **AI/ML frameworks:** TensorFlow, PyTorch, Scikit-learn, OpenCV, Hugging Face, Transformers, ONNX, TensorRT
-* **Technologies:** Prompt engineering, Docker, CI/CD (GitHub Actions, Jenkins)
-* **Tools:** Git, VSCode, Pandas, NumPy, IceVision, LangChain, LlamaIndex, Tensorboard, JupyterLab, Streamlit
-* **Databases:** ElasticSearch, FAISS, TFRecords, Protobuf
-* **Cloud:** AWS (EC2, S3, Lambda, SageMaker), GCP
+
+Programming languages
+{: .cv-cat}
+
+* Python
+* C
+{: .cv-chips}
+
+AI/ML frameworks
+{: .cv-cat}
+
+* TensorFlow
+* PyTorch
+* Scikit-learn
+* OpenCV
+* Hugging Face
+* Transformers
+* ONNX
+* TensorRT
+{: .cv-chips}
+
+Technologies
+{: .cv-cat}
+
+* Prompt engineering
+* Docker
+* CI/CD (GitHub Actions, Jenkins)
+{: .cv-chips}
+
+Tools
+{: .cv-cat}
+
+* Git
+* VSCode
+* Pandas
+* NumPy
+* IceVision
+* LangChain
+* LlamaIndex
+* Tensorboard
+* JupyterLab
+* Streamlit
+{: .cv-chips}
+
+Databases
+{: .cv-cat}
+
+* ElasticSearch
+* FAISS
+* TFRecords
+* Protobuf
+{: .cv-chips}
+
+Cloud
+{: .cv-cat}
+
+* AWS (EC2, S3, Lambda, SageMaker)
+* GCP
+{: .cv-chips}
 
 ## Publications
   <ul>{% for post in site.publications reversed %}
