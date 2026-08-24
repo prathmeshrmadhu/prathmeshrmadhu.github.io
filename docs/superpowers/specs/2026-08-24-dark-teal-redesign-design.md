@@ -270,7 +270,20 @@ keeps the inner pages from being improvised.
 7. **Glyph** — the four CSS shapes: bars, target, dot matrix, quarter dial
 8. **Inverted block** — amber ground, teal text. **Maximum one per page.** The scarcity is
    what gives it force
-9. **Row list** — fixed-width mono date + title, baseline-aligned
+9. **Row list** — fixed-width mono date + title, baseline-aligned, **plus a metadata line**.
+   A bare date-and-title row would silently discard real data. The collections carry more
+   than a title, and `_includes/archive-single.html` renders all of it today:
+
+   | Collection | Front-matter keys | Row must render |
+   | --- | --- | --- |
+   | `_publications` | `title`, `date`, `venue`, `paperurl`, `citation` | year, title (links to detail page), venue, and a paper link where `paperurl` exists |
+   | `_talks` | `title`, `date`, `venue`, `type`, `location` | year, title, type, venue, location |
+   | `_teaching` | `title`, `date`, `venue`, `type`, `location` | year, title, type, venue, location |
+   | `_posts` | `title`, `date`, `excerpt`, `tags` | date + title (the homepage writing rows) |
+
+   So the primitive has two variants: `row` (date + title only, homepage writing rows) and
+   `row--meta` (adds a muted metadata line beneath the title). `citation` is long-form and
+   belongs on the detail page, not the row.
 
 ### Homepage sections
 
@@ -286,7 +299,7 @@ keeps the inner pages from being improvised.
 | Route | Composition |
 | --- | --- |
 | `/work/` | Heading band; first item (by `order`) as the feature card, remaining five in a 2-up grid. Kicker from `result:` / `result_note:` |
-| `/research/` | Three bands — Publications (row lists grouped by year, year as mono eyebrow), Talks (row lists), Teaching (row lists) |
+| `/research/` | **Intro prose band, then** three bands — Publications (row lists grouped by year, year as mono eyebrow), Talks, Teaching |
 | `/blog/` | Card grid, 2-up, kicker = post date, body = `excerpt:` |
 | `/about/` | Single prose band, ~680px measure |
 | `/cv/` | Existing kramdown IAL classes remapped onto primitives — see below |
@@ -294,6 +307,17 @@ keeps the inner pages from being improvised.
 
 Publications stay a **row list, not cards**. That was the Phase 3 decision and it holds; it now
 has a native primitive instead of a fought-with archive style.
+
+**`/research/` carries five paragraphs of substantial hand-written prose** before the
+Publications heading — the dissertation and its argument about why photographic priors fail on
+artwork, the Odeuropa project, the ODOR dataset, SniffyArt, the ODPR challenge at ICPR 2022,
+and the separate medical-imaging thread. This is Phase 1 content and **must survive the
+redesign verbatim**. It renders in an intro prose band above the three row-list bands, using
+`_prose.scss` at a ~680px measure. Losing or truncating it is a build failure, and a character
+count is asserted in the success criteria.
+
+The page's existing `group_by_exp: "p", "p.date | date: '%Y'"` year grouping is correct and is
+carried over unchanged.
 
 Deleting `_sass/_archive.scss` incidentally resolves the `/research/` publication-title
 styling noted in the closed won't-do list (ochre + serif + bold + underline stacked). Those
@@ -453,10 +477,17 @@ All must pass before merging `redesign` into `master`.
 10. `/about/` resolves as a real page; nothing else claims that URL
 11. No horizontal overflow at 1440, 1024, 768 and 375 px
 12. All 36 detail pages render via `detail.html`; none fall back to a deleted layout
-13. Two font families requested, not four; both self-hosted, zero third-party font requests
+13. Two font families, not four, self-hosted as four `woff2` subset files totalling ~82 KB.
+    Zero third-party font requests in built HTML
 14. Zero image requests on `/`
 15. **Zero JavaScript requests** other than analytics. No `main.min.js`, no jQuery, no
     `assets/js/` directory in `_site`
+16. `/research/`'s five intro paragraphs survive: the rendered page contains the strings
+    "Concepts to Computational Constructs", "Odeuropa", "SniffyArt" and
+    "pulmonary hemosiderophages", and the intro prose is within 5% of its current character
+    count
+17. Publication rows render `venue` for all 21 entries, and a paper link wherever `paperurl`
+    exists. Talk and teaching rows render `type`, `venue` and `location`
 
 ### Verification method
 
