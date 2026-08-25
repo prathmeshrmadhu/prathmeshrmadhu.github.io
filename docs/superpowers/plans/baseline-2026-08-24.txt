@@ -1,0 +1,9 @@
+BASELINE — master, before Phase 4
+html pages: 53
+main.css bytes: 102456
+js files shipped: 2
+   assets/js/main.min.js 131019
+   assets/js/collapse.js 545
+source assets/js bytes: 291246
+source assets/fonts bytes: 2957652
+research intro chars: 2358
