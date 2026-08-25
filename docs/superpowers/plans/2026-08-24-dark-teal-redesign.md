@@ -453,23 +453,42 @@ This task replaces the page chrome and gets a compiling, if unfinished, site. Af
 
 - [ ] **Step 1: Patch the three external dependencies out of `_sass/_reset.scss`**
 
-`_reset.scss` is 178 lines and theme-neutral apart from exactly three references — verified by dependency scan. Patching them lets `vendor/breakpoint/` be deleted.
+`_reset.scss` is 178 lines and theme-neutral apart from **five** references. Patching them lets `vendor/breakpoint/`, `vendor/susy/` and `_mixins.scss` be deleted.
 
-Line 13 currently opens a breakpoint block. Replace:
+**Correction, found during execution:** an earlier draft of this task said "exactly three references, verified by dependency scan." That was wrong, and the scan in Step 2 is why — it matches only `$variables`, so it reports a clean `unknown: []` while `@include` and `@extend` dependencies sit untouched. There are five, not three. Two of them break compilation.
+
+1. Line 5 — `@include border-box-sizing;` resolves to `vendor/susy/susy/language/susy/_box-sizing.scss`. Inline it:
 
 ```scss
-  @include breakpoint($medium) {
+/* Inlined from susy's border-box-sizing mixin; vendor/susy is being deleted. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 ```
 
-with:
+2. Line 13 opens a breakpoint block. Replace `@include breakpoint($medium) {` with:
 
 ```scss
   @media (min-width: $bp-md) {
 ```
 
-`$background-color` (line 10) and `$link-color` (line 70) need no edit — `_tokens.scss` defines both.
+3. Line 76 — `a:focus { @extend %tab-focus; }` resolves to `_mixins.scss`, which itself references `$warning-color`, making this a transitive third dependency. **Delete the rule**, do not inline it: `%tab-focus` emits a grey dotted outline on `:focus` (not `:focus-visible`), which fires on mouse click and fights the amber `:focus-visible` ring that `_base.scss` establishes. Replace with a comment:
+
+```scss
+/* Focus state is owned by _base.scss (:focus-visible, amber ring). The theme's
+   %tab-focus placeholder lived in _mixins.scss and pulled in a warning-colour
+   variable; both are being deleted. */
+```
+
+4. `$background-color` (line 10) and `$link-color` (line 70) need no edit — `_tokens.scss` defines both names deliberately.
+
+The `a:hover, a:active { outline: 0 }` rule further down is **not** a focus suppression — it omits `:focus`, so the amber ring survives. Leave it.
 
 - [ ] **Step 2: Verify no other theme variable leaks into the reset**
+
+A variable-only scan is not enough — it cannot see `@include` or `@extend`. Check all three kinds:
 
 ```bash
 python3 - <<'PY'
@@ -478,8 +497,9 @@ src = pathlib.Path('_sass/_reset.scss').read_text()
 known = {'$background-color', '$link-color', '$bp-md'}
 found = set(re.findall(r'\$[a-z0-9-]+', src))
 print("variables used:", sorted(found))
-print("unknown:", sorted(found - known))
-print("breakpoint mixin calls left:", src.count('@include breakpoint'))
+print("unknown vars:", sorted(found - known))
+print("@include calls left:", re.findall(r'@include\s+([\w-]+)', src))
+print("@extend calls left:", re.findall(r'@extend\s+([%.\w-]+)', src))
 PY
 ```
 
@@ -487,11 +507,12 @@ Expected:
 
 ```
 variables used: ['$background-color', '$bp-md', '$link-color']
-unknown: []
-breakpoint mixin calls left: 0
+unknown vars: []
+@include calls left: []
+@extend calls left: []
 ```
 
-If `unknown` is non-empty, add those variables to `_tokens.scss` or inline their values. Do not resurrect `_variables.scss`.
+If `unknown vars` is non-empty, add those variables to `_tokens.scss` or inline their values. If either mixin list is non-empty, resolve where it comes from and inline or delete it. **Do not resurrect `_variables.scss` or `_mixins.scss`** — every file they live in is deleted in Task 18, so a surviving reference is a build failure deferred, not avoided.
 
 - [ ] **Step 3: Write `_sass/_base.scss`**
 
