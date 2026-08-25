@@ -15,29 +15,31 @@ fetch_family () {
   local slug="$1" query="$2"
   local css
   css="$(curl -sS -A "$UA" "https://fonts.googleapis.com/css2?family=${query}&display=swap")"
-  python3 -c "
+  # `python3 -` reads the program from stdin (the heredoc) and still takes argv,
+  # so the CSS travels as an argument. Do NOT pipe the CSS in: a heredoc claims
+  # stdin, and the pipe would be silently discarded.
+  python3 - "$slug" "$css" <<'PY'
 import re, subprocess, sys
-slug = sys.argv[1]
-css = sys.argv[2]
+slug, css = sys.argv[1], sys.argv[2]
 # One @font-face block per unicode subset. Pick the two we ship.
-wanted = {'U+0000-00FF': 'latin', 'U+0100-02BA': 'latin-ext'}
+wanted = {"U+0000-00FF": "latin", "U+0100-02BA": "latin-ext"}
 found = {}
-for block in re.findall(r'@font-face\s*\{(.*?)\}', css, re.S):
-    rng = re.search(r'unicode-range:\s*([^;]+);', block)
-    url = re.search(r'url\((https://[^)]+\.woff2)\)', block)
+for block in re.findall(r"@font-face\s*\{(.*?)\}", css, re.S):
+    rng = re.search(r"unicode-range:\s*([^;]+);", block)
+    url = re.search(r"url\((https://[^)]+\.woff2)\)", block)
     if not rng or not url:
         continue
-    first = rng.group(1).split(',')[0].strip()
+    first = rng.group(1).split(",")[0].strip()
     if first in wanted:
         found[wanted[first]] = url.group(1)
 for subset, url in sorted(found.items()):
-    out = f'assets/fonts/{slug}-{subset}.woff2'
-    subprocess.run(['curl', '-sS', '-o', out, url], check=True)
-    print(f'  {out}  <-  {url}')
+    out = f"assets/fonts/{slug}-{subset}.woff2"
+    subprocess.run(["curl", "-sS", "-o", out, url], check=True)
+    print(f"  {out}  <-  {url}")
 missing = set(wanted.values()) - set(found)
 if missing:
-    sys.exit(f'ERROR: subsets not found for {slug}: {sorted(missing)}')
-" "$slug" "$css"
+    sys.exit(f"ERROR: subsets not found for {slug}: {sorted(missing)}")
+PY
 }
 
 echo "Space Grotesk:"

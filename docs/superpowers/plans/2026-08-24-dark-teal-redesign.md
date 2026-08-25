@@ -249,10 +249,12 @@ fetch_family () {
   local slug="$1" query="$2"
   local css
   css="$(curl -sS -A "$UA" "https://fonts.googleapis.com/css2?family=${query}&display=swap")"
-  printf '%s' "$css" | python3 - "$slug" <<'PY'
+  # `python3 -` reads the program from stdin (the heredoc) and still takes argv,
+  # so the CSS travels as an argument. Do NOT pipe the CSS in: a heredoc claims
+  # stdin, and the pipe would be silently discarded.
+  python3 - "$slug" "$css" <<'PY'
 import re, subprocess, sys
-slug = sys.argv[1]
-css = sys.stdin.read()
+slug, css = sys.argv[1], sys.argv[2]
 # One @font-face block per unicode subset. Pick the two we ship.
 wanted = {"U+0000-00FF": "latin", "U+0100-02BA": "latin-ext"}
 found = {}
