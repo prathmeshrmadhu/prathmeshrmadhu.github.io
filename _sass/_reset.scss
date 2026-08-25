@@ -2,7 +2,12 @@
    STYLE RESETS
    ========================================================================== */
 
-@include border-box-sizing;
+/* Inlined from susy's border-box-sizing mixin; vendor/susy is being deleted. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 html {
   /* apply a natural box layout model to all elements */
@@ -10,7 +15,7 @@ html {
   background-color: $background-color;
   font-size: 16px;
 
-  @include breakpoint($medium) {
+  @media (min-width: $bp-md) {
     font-size: 18px;
   }
 
@@ -70,11 +75,9 @@ a {
   color: $link-color;
 }
 
-/* Apply focus state */
-
-a:focus {
-  @extend %tab-focus;
-}
+/* Focus state is owned by _base.scss (:focus-visible, amber ring). The theme's
+   %tab-focus placeholder lived in _mixins.scss and pulled in a warning-colour
+   variable; both are being deleted. */
 
 /* Remove outline from links */
 

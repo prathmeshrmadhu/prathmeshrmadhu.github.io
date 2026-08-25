@@ -1,0 +1,168 @@
+// ---------------------------------------------------------------------------
+// Header — wordmark, nav, CTA pill, CSS-only mobile menu.
+// ---------------------------------------------------------------------------
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: $container;
+  margin: 0 auto;
+  padding: 20px $inset;
+}
+
+// Wordmark: square-in-square, drawn in CSS. No image.
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  color: $ink;
+
+  &:hover { color: $ink; }
+  &:hover .wordmark__mark::after { background: $ink; }
+}
+
+.wordmark__mark {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid $accent;
+  flex: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    background: $accent;
+    transition: background 150ms ease;
+  }
+}
+
+.wordmark__text {
+  font: 600 13.5px/1 $sans;
+  letter-spacing: 0.01em;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+
+.nav__list {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav__link {
+  font: 500 12px/1 $mono;
+  color: $ink-62;
+  transition: $t-color;
+
+  &:hover { color: $ink; }
+
+  &[aria-current="page"] { color: $ink; }
+}
+
+.pill {
+  padding: 8px 13px;
+  background: $accent;
+  color: $ground;
+  border-radius: 20px;
+  font: 500 12px/1 $mono;
+  white-space: nowrap;
+  transition: transform $t-lift, filter $t-lift;
+
+  &:hover {
+    color: $ground;
+    transform: translateY(-1px);
+    filter: brightness(1.08);
+  }
+}
+
+// --- Mobile menu ---------------------------------------------------------
+
+.nav__toggle {
+  position: absolute;
+  opacity: 0;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+}
+
+.nav__burger {
+  display: none;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.nav__burger-bars,
+.nav__burger-bars::before,
+.nav__burger-bars::after {
+  display: block;
+  width: 20px;
+  height: 1.5px;
+  background: $ink;
+}
+
+.nav__burger-bars {
+  position: relative;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+  }
+  &::before { top: -6px; }
+  &::after  { top: 6px; }
+}
+
+.nav__toggle:focus-visible + .nav__burger {
+  outline: 2px solid $accent;
+  outline-offset: 3px;
+}
+
+@media (max-width: $bp-md - 1px) {
+  .site-header__inner {
+    padding: 16px $inset-sm;
+    flex-wrap: wrap;
+  }
+
+  .nav__burger { display: flex; }
+
+  // The pill stays visible in the bar; only the link list collapses.
+  .nav__list {
+    display: none;
+    flex-basis: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    order: 3;
+  }
+
+  .nav__list li {
+    width: 100%;
+    border-top: 1px solid $line-soft;
+  }
+
+  .nav__link {
+    display: block;
+    padding: 14px 0;
+    font-size: 13px;
+  }
+
+  .nav__toggle:checked ~ .nav__list { display: flex; }
+}
+
+@media (min-width: $bp-md) {
+  .nav__toggle { display: none; }
+}

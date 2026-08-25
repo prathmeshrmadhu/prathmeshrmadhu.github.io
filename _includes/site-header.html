@@ -1,0 +1,22 @@
+{% include base_path %}
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="wordmark" href="{{ base_path }}/">
+      <span class="wordmark__mark" aria-hidden="true"></span>
+      <span class="wordmark__text">P.R. MADHU</span>
+    </a>
+
+    <input class="nav__toggle" type="checkbox" id="nav-toggle">
+    <label class="nav__burger" for="nav-toggle"><span class="u-sr-only">Menu</span><span class="nav__burger-bars" aria-hidden="true"></span></label>
+
+    <nav class="nav" aria-label="Main">
+      <ul class="nav__list">
+        {% for item in site.data.navigation.main %}
+          <li><a class="nav__link" href="{{ base_path }}{{ item.url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.title }}</a></li>
+        {% endfor %}
+      </ul>
+      <a class="pill" href="{{ base_path }}/contact/">Let's talk</a>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,17 @@
+{% include base_path %}
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__id">
+      Prathmesh Madhu
+      <span class="site-footer__where">Pune, India</span>
+    </p>
+    <ul class="site-footer__links">
+      <li><a href="mailto:prathmesh@infocusp.com">Email</a></li>
+      <li><a href="https://x.com/prathmeshmadhu">X</a></li>
+      <li><a href="https://www.linkedin.com/in/prathmeshrmadhu/">LinkedIn</a></li>
+      <li><a href="https://github.com/prathmeshrmadhu">GitHub</a></li>
+      <li><a href="{% if site.atom_feed.path %}{{ site.atom_feed.path }}{% else %}{{ base_path }}/feed.xml{% endif %}">Feed</a></li>
+    </ul>
+    <p class="site-footer__copyright">&copy; {{ site.time | date: '%Y' }} Prathmesh Madhu. Built with Jekyll.</p>
+  </div>
+</footer>

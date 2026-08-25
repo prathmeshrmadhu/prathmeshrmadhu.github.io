@@ -1,0 +1,97 @@
+// ---------------------------------------------------------------------------
+// Layout — container, band rhythm, heading rows, and the shared small
+// primitives (kicker, chip) that several components reuse.
+// ---------------------------------------------------------------------------
+
+.band {
+  padding: $band $inset;
+
+  &--divided { border-top: 1px solid $line-soft; }
+  &--tight   { padding-top: 0; }
+}
+
+.band__inner {
+  max-width: $container;
+  margin: 0 auto;
+}
+
+// H2 + mono eyebrow, baseline-aligned.
+.heading-row {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 30px;
+
+  // H2 + amber link pushed to the far edge.
+  &--split {
+    justify-content: space-between;
+    margin-bottom: 26px;
+  }
+}
+
+.heading-row__title {
+  margin: 0;
+  font: 600 26px/1 $sans;
+  letter-spacing: -0.02em;
+}
+
+.heading-row__eyebrow {
+  font: 400 12px/1 $mono;
+  color: $ink-52;
+}
+
+.heading-row__link {
+  font: 500 12px/1 $mono;
+  color: $accent;
+  white-space: nowrap;
+}
+
+// Kicker — mono, tracked out, uppercased in CSS so front matter keeps its case.
+.kicker {
+  margin: 0 0 16px;
+  font: 500 11px/1 $mono;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $accent;
+}
+
+// Chips — tag pills.
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chips li {
+  padding: 6px 10px;
+  background: $chip;
+  border-radius: $r-card;
+  font: 500 11px/1 $mono;
+  color: $ink-64;
+}
+
+// Page-title band used by route.html and detail.html.
+.page-title {
+  padding: 52px $inset $band;
+}
+
+.page-title__inner {
+  max-width: $container;
+  margin: 0 auto;
+}
+
+.page-title__h1 {
+  margin: 0;
+  font: 700 42px/1.05 $sans;
+  letter-spacing: -0.03em;
+}
+
+.page-title__lede {
+  max-width: $measure;
+  margin: 18px 0 0;
+  font: 400 16.5px/1.65 $sans;
+  color: $ink-70;
+}

@@ -1,6 +1,7 @@
-# main links links
+# Main navigation. Order is from the Phase 4 spec: Work, Research, Blog,
+# About, CV, Contact. The amber "Let's talk" pill also points at /contact/.
 main:
-  - title: "Selected Work"
+  - title: "Work"
     url: /work/
 
   - title: "Research"
@@ -9,5 +10,11 @@ main:
   - title: "Blog"
     url: /blog/
 
+  - title: "About"
+    url: /about/
+
   - title: "CV"
     url: /cv/
+
+  - title: "Contact"
+    url: /contact/
