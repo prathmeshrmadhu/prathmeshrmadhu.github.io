@@ -1,0 +1,69 @@
+// ---------------------------------------------------------------------------
+// Design tokens — single source of truth.
+//
+// Two hues only: $ground and $accent. Everything else is $ink at an alpha.
+// Do not add a third hue.
+//
+// Contrast note: $ink-52 is the WCAG AA floor on $ground (measured 4.54:1).
+// The source design specified 0.40 for eyebrows and 0.42 for dates; both fail
+// AA (3.28 and 3.47). They are collapsed into $ink-52 here. Do not lower it.
+// ---------------------------------------------------------------------------
+
+// Colour
+$ground:        #08302A;
+$ink:           #F4F2ED;
+$accent:        #F0A202;
+
+$ink-72:        rgba(244, 242, 237, 0.72);  // hero pill
+$ink-70:        rgba(244, 242, 237, 0.70);  // lede
+$ink-68:        rgba(244, 242, 237, 0.68);  // feature card body
+$ink-64:        rgba(244, 242, 237, 0.64);  // chip label
+$ink-62:        rgba(244, 242, 237, 0.62);  // nav items
+$ink-60:        rgba(244, 242, 237, 0.60);  // card body
+$ink-55:        rgba(244, 242, 237, 0.55);  // metric captions
+$ink-52:        rgba(244, 242, 237, 0.52);  // dates, eyebrows — AA floor
+
+$line:          rgba(244, 242, 237, 0.13);  // card borders
+$line-strong:   rgba(244, 242, 237, 0.20);  // hero pill border
+$line-hover:    rgba(244, 242, 237, 0.28);  // card border on hover
+$line-ring:     rgba(244, 242, 237, 0.17);  // feature card decorative rings
+$line-soft:     rgba(244, 242, 237, 0.10);  // band dividers
+$surface:       rgba(244, 242, 237, 0.05);  // metric tile fill
+$surface-hover: rgba(244, 242, 237, 0.03);  // card tint on hover
+$chip:          rgba(244, 242, 237, 0.08);  // chip fill
+$glyph-mute:    rgba(244, 242, 237, 0.25);  // inactive glyph segments
+$grid-line:     rgba(244, 242, 237, 0.04);  // hero blueprint grid
+
+// Consumed by the retained _reset.scss. Do not rename.
+$background-color: $ground;
+$link-color:       $accent;
+
+// Type
+$sans: "Space Grotesk", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+$mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+// Space
+$container: 1180px;
+$inset:     52px;   // horizontal page inset, desktop
+$inset-sm:  20px;   // horizontal page inset, mobile
+$band:      56px;   // vertical band rhythm, desktop
+$band-sm:   32px;   // vertical band rhythm, mobile
+$measure:   680px;  // long-form prose measure
+
+// Radius. No shadows anywhere — depth comes from alpha surfaces and 1px borders.
+$r-metric: 12px;
+$r-card:   14px;
+$r-work:   16px;
+$r-pill:   22px;
+
+// Breakpoints.
+// Phase 3 inherited a $medium defined twice in the theme's _variables.scss, and
+// the non-!default declaration won at 500px — which is why the old card grids
+// went two-up on a large phone. These are the only breakpoints now.
+$bp-md: 768px;
+$bp-lg: 1024px;
+
+// Transitions
+$t-color: color 150ms ease;
+$t-lift:  160ms ease;
+$t-card:  180ms ease;
