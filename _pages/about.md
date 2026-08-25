@@ -1,11 +1,7 @@
 ---
-permalink: /
+permalink: /about/
 title: "About"
 excerpt: "Computer vision researcher and machine learning leader."
-author_profile: true
-redirect_from:
-  - /about/
-  - /about.html
 ---
 
 I'm Prathmesh — a computer vision researcher and machine learning leader with over ten years spanning peer-reviewed research and production systems.
@@ -15,11 +11,6 @@ I'm Senior Vice President of Machine Learning at [Infocusp Innovations](http://w
 I hold a PhD from the [Chair of Pattern Recognition](https://lme.tf.fau.de/) at FAU Erlangen-Nürnberg. My dissertation addressed scene understanding in digital humanities — art history, classical archaeology, and Christian archaeology — extending object detection, pose estimation, and compositional analysis to artwork. That work produced ICC and ICC++, explainable feature learning methods for understanding image composition.
 
 The through-line across both halves of my work: I take on problems where standard models fail — non-standard imagery, scarce labels, tight compute budgets, and outputs that have to be auditable.
-
-## Where to go next
-
-* **[Selected work](/work/)** — what I've built, and what it measurably did
-* **[Research](/research/)** — publications, talks, and teaching
 
 Outside of that, I'm fascinated by mathematics and drawn to problems built on it. I also [write occasionally](/blog/) about work, focus, and how this field keeps changing.
 
