@@ -2,4 +2,26 @@
 layout: base
 ---
 
+{% include base_path %}
+{% assign pub_count = site.publications | size %}
+{% capture cite_caption %}papers, {{ site.scholar_citations }} citations{% endcapture %}
+
+<section class="hero">
+  <div class="hero__glow" aria-hidden="true"></div>
+  <div class="hero__grid" aria-hidden="true"></div>
+  <div class="hero__inner">
+    <div>
+      <p class="hero__pill">SVP MACHINE LEARNING · INFOCUSP</p>
+      <h1 class="hero__h1">Standard models<br>fail. <em>That's where<br>I start.</em></h1>
+      <p class="hero__lede">Computer vision researcher and ML leader. Ten years across peer-reviewed research and production systems — non-standard imagery, scarce labels, tight compute, auditable outputs.</p>
+    </div>
+    <div class="hero__metrics">
+      {% include metric-tile.html value="9×" caption="faster SLAM on edge" %}
+      {% include metric-tile.html value="+20%" caption="F1 in production" %}
+      {% include metric-tile.html value=pub_count caption=cite_caption %}
+      {% include metric-tile.html value="750+" caption="stars on tf-cnnvis" %}
+    </div>
+  </div>
+</section>
+
 {{ content }}

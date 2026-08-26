@@ -1,1 +1,107 @@
-// filled in a later task
+// ---------------------------------------------------------------------------
+// Hero — the amber glow, the blueprint grid, and the metric tiles.
+// Both background layers are pure CSS gradients. No images anywhere.
+// ---------------------------------------------------------------------------
+
+.hero {
+  position: relative;
+  padding: 64px $inset 0;
+  overflow: hidden;
+}
+
+// Amber radial wash, top-right.
+.hero__glow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 520px;
+  background: radial-gradient(120% 90% at 82% 8%, rgba(240, 162, 2, 0.22) 0%, transparent 62%);
+  pointer-events: none;
+}
+
+// Blueprint grid: two 1px gradients on a 44px tile.
+.hero__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient($grid-line 1px, transparent 1px),
+    linear-gradient(90deg, $grid-line 1px, transparent 1px);
+  background-size: 44px 44px;
+  pointer-events: none;
+}
+
+.hero__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 48px;
+  align-items: end;
+  max-width: $container;
+  margin: 0 auto;
+  padding-bottom: 52px;
+}
+
+.hero__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 28px;
+  padding: 7px 13px;
+  border: 1px solid $line-strong;
+  border-radius: 20px;
+  font: 500 11px/1 $mono;
+  color: $ink-72;
+
+  &::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: $accent;
+    border-radius: 50%;
+    flex: none;
+  }
+}
+
+.hero__h1 {
+  margin: 0;
+  font: 700 64px/1 $sans;
+  letter-spacing: -0.035em;
+}
+
+.hero__h1 em {
+  font-style: normal;
+  color: $accent;
+}
+
+.hero__lede {
+  max-width: 480px;
+  margin: 26px 0 0;
+  font: 400 16.5px/1.65 $sans;
+  color: $ink-70;
+}
+
+.hero__metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.metric {
+  padding: 22px;
+  background: $surface;
+  border: 1px solid rgba(244, 242, 237, 0.11);
+  border-radius: $r-metric;
+}
+
+.metric__value {
+  font: 700 40px/1 $sans;
+  letter-spacing: -0.03em;
+  color: $accent;
+}
+
+.metric__caption {
+  margin-top: 8px;
+  font: 400 11px/1.45 $mono;
+  color: $ink-55;
+}
