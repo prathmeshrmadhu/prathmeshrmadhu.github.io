@@ -24,4 +24,27 @@ layout: base
   </div>
 </section>
 
+<section class="band band--divided">
+  <div class="band__inner">
+    <div class="heading-row">
+      <h2 class="heading-row__title">What I work on</h2>
+      <span class="heading-row__eyebrow">/ four recurring problems</span>
+    </div>
+    <div class="capability-grid">
+      {% include capability-card.html glyph="bars" lit=true
+         title="Vision on the edge"
+         body="TensorRT pipelines and visual SLAM running in real time under strict power limits." %}
+      {% include capability-card.html glyph="target"
+         title="Auditable agentic systems"
+         body="LLM-as-a-judge layers so every output can be audited rather than trusted." %}
+      {% include capability-card.html glyph="matrix"
+         title="Multimodal retrieval"
+         body="Fusing vector-indexed image and text embeddings with keyword search." %}
+      {% include capability-card.html glyph="dial"
+         title="Scarce-label regimes"
+         body="One-shot detection for tiny targets, imbalance and almost no labelled failures." %}
+    </div>
+  </div>
+</section>
+
 {{ content }}

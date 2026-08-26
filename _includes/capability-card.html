@@ -1,0 +1,5 @@
+<article class="card card--capability{% if include.lit %} card--lit{% endif %}">
+  {% include glyph.html type=include.glyph %}
+  <h3 class="card__title">{{ include.title }}</h3>
+  <p class="card__body">{{ include.body }}</p>
+</article>

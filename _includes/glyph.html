@@ -1,0 +1,10 @@
+{% case include.type %}
+  {% when 'bars' %}
+    <span class="glyph glyph--bars" aria-hidden="true"><i></i><i></i><i></i></span>
+  {% when 'target' %}
+    <span class="glyph glyph--target" aria-hidden="true"></span>
+  {% when 'matrix' %}
+    <span class="glyph glyph--matrix" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+  {% when 'dial' %}
+    <span class="glyph glyph--dial" aria-hidden="true"></span>
+{% endcase %}

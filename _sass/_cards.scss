@@ -1,1 +1,107 @@
-// rewritten in a later task
+// ---------------------------------------------------------------------------
+// Cards — one primitive, several variants. No shadows: depth is a 1px border
+// over an alpha surface.
+// ---------------------------------------------------------------------------
+
+.card {
+  position: relative;
+  border: 1px solid $line;
+  border-radius: $r-card;
+  transition: border-color $t-card, background-color $t-card;
+}
+
+// Whole card is the click target where it wraps a link.
+.card--link:hover {
+  border-color: $line-hover;
+  background-color: $surface-hover;
+}
+
+.card__title {
+  margin: 0;
+  font: 600 17px/1.28 $sans;
+}
+
+.card__body {
+  margin: 9px 0 0;
+  font: 400 13px/1.6 $sans;
+  color: $ink-60;
+}
+
+// --- Capability variant --------------------------------------------------
+
+.card--capability {
+  padding: 24px 22px 26px;
+}
+
+// The first card carries a soft amber wash so the row has an entry point.
+.card--lit {
+  background: linear-gradient(180deg, rgba(240, 162, 2, 0.09), transparent 70%);
+}
+
+.capability-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+// --- Glyphs: four shapes, pure CSS ---------------------------------------
+
+.glyph {
+  display: block;
+  margin-bottom: 22px;
+}
+
+// Three vertical bars, first one lit.
+.glyph--bars {
+  display: flex;
+  gap: 3px;
+
+  i {
+    width: 7px;
+    height: 22px;
+    background: $glyph-mute;
+  }
+  i:first-child { background: $accent; }
+}
+
+// Concentric circle with a filled centre.
+.glyph--target {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  border: 2px solid $accent;
+  border-radius: 50%;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 7px;
+    height: 7px;
+    background: $accent;
+    border-radius: 50%;
+  }
+}
+
+// Alternating 3x2 dot matrix.
+.glyph--matrix {
+  display: grid;
+  grid-template-columns: repeat(3, 6px);
+  gap: 4px;
+
+  i {
+    height: 6px;
+    background: $glyph-mute;
+  }
+  i:nth-child(odd) { background: $accent; }
+}
+
+// Quarter dial.
+.glyph--dial {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: conic-gradient($accent 0 25%, rgba(244, 242, 237, 0.22) 25% 100%);
+}
