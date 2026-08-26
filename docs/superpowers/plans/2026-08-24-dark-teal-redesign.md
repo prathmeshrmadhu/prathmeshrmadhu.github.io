@@ -2120,6 +2120,7 @@ Homepage section 4. A 1.5fr feature card beside two stacked secondaries, and a `
 - Rewrite: `_includes/work-card.html`
 - Modify: `_sass/_cards.scss` (append)
 - Modify: `_layouts/home.html`
+- Modify: `_pages/work.html:14` (pass the new `post=` parameter — see Step 3b)
 
 - [ ] **Step 1: Rewrite `_includes/work-card.html`**
 
@@ -2273,6 +2274,22 @@ Note the `{% assign %}` before every loop. **Liquid's `for` tag silently ignores
 
 `View all {{ work_count }}` renders as `View all 6` rather than the design's spelled-out "six", because the count is derived. A number that can never drift beats a word that can.
 
+- [ ] **Step 3b: Update the existing `/work/` call site**
+
+The Step 1 rewrite makes `post` an explicit parameter. `_pages/work.html:14` currently calls the include bare, relying on the ambient `post` from its `for` loop:
+
+```liquid
+  {% include work-card.html %}
+```
+
+Left alone that renders six empty `<article>` shells — no kicker, no title, no link, and **no error**. Change that one line to:
+
+```liquid
+  {% include work-card.html post=post variant="secondary" %}
+```
+
+Task 11 rewrites this page properly. This one-line patch is only here so the site is never left in a broken intermediate state, and so Step 4 can assert it.
+
 - [ ] **Step 4: Build and verify the derivation**
 
 ```bash
@@ -2293,17 +2310,20 @@ checks = {
     "derived work count": "View all 6" in home,
     "links to /work/": '/work/' in home,
 }
+work = pathlib.Path('_site/work/index.html').read_text()
+checks["/work/ still renders 6 cards"] = work.count('card--work') == 6
+checks["/work/ cards are not empty shells"] = work.count('rel="permalink"') == 6
 for k, v in checks.items():
     print(("PASS " if v else "FAIL ") + k)
 PY
 ```
 
-Expected: every line `PASS`. If all three card slots are empty, the `{% assign %}` before a `for` loop is missing — see Step 3.
+Expected: every line `PASS`. If all three homepage card slots are empty, the `{% assign %}` before a `for` loop is missing — see Step 3. If the two `/work/` checks fail, Step 3b was skipped.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add _includes/work-card.html _sass/_cards.scss _layouts/home.html
+git add _includes/work-card.html _sass/_cards.scss _layouts/home.html _pages/work.html
 git commit -m "feat: selected work feature and secondary cards
 
 Cards, kickers and the 'View all' count all derive from portfolio front
