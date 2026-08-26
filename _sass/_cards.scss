@@ -177,3 +177,10 @@
 
   .card__title { font: 600 19px/1.25 $sans; }
 }
+
+.work-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 14px;
+}

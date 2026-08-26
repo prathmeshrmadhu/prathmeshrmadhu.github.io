@@ -9,8 +9,18 @@ redirect_from:
 {% include base_path %}
 
 {% assign ordered_work = site.portfolio | sort: 'order' %}
-<div class="cardgrid">
-{% for post in ordered_work %}
-  {% include work-card.html post=post variant="secondary" %}
-{% endfor %}
-</div>
+{% assign featured = ordered_work | slice: 0, 1 %}
+{% assign rest = ordered_work | slice: 1, 5 %}
+
+<section class="band band--tight">
+  <div class="band__inner">
+    {% for post in featured %}
+      {% include work-card.html post=post variant="feature" %}
+    {% endfor %}
+    <div class="work-list">
+      {% for post in rest %}
+        {% include work-card.html post=post variant="secondary" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
