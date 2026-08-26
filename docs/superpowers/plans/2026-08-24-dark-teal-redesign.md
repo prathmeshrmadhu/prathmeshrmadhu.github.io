@@ -2543,7 +2543,9 @@ python3 - <<'PY'
 import pathlib
 home = pathlib.Path('_site/index.html').read_text()
 checks = {
-    "three writing rows": home.count('class="row') == 3,
+    # Anchor on the tag: 'class="row' would also match the <ul class="row-list">.
+    "three writing rows": home.count('<li class="row') == 3,
+    "one row list": home.count('class="row-list"') == 1,
     "one inverted block": home.count('class="invert"') == 1,
     "approved contact H2": "Working on something hard?" in home,
     "mockup H2 gone": "doesn&#39;t fit the benchmark" not in home and "doesn't fit the benchmark" not in home,
