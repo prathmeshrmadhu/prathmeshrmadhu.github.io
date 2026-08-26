@@ -2301,7 +2301,10 @@ home = pathlib.Path('_site/index.html').read_text()
 checks = {
     "one feature card": home.count('card--work-feature') == 1,
     "two secondary cards": home.count('card--work-secondary') == 2,
-    "two rings on the feature": home.count('card__ring') == 2,
+    # Count the modifiers, not the base class: 'card__ring' is a substring of
+    # 'card__ring--lg', so each span matches it twice.
+    "one large ring": home.count('card__ring--lg') == 1,
+    "one small ring": home.count('card__ring--sm') == 1,
     "order 1 = SLAM": "Real-time visual SLAM on edge hardware" in home,
     "order 2 = defect detection": "Defect detection where models plateau" in home,
     "order 3 = agentic": "Agentic" in home,
@@ -2311,7 +2314,8 @@ checks = {
     "links to /work/": '/work/' in home,
 }
 work = pathlib.Path('_site/work/index.html').read_text()
-checks["/work/ still renders 6 cards"] = work.count('card--work') == 6
+# Same substring trap: 'card--work' is inside 'card--work-secondary'.
+checks["/work/ still renders 6 cards"] = work.count('card--work-secondary') == 6
 checks["/work/ cards are not empty shells"] = work.count('rel="permalink"') == 6
 for k, v in checks.items():
     print(("PASS " if v else "FAIL ") + k)
@@ -2319,6 +2323,8 @@ PY
 ```
 
 Expected: every line `PASS`. If all three homepage card slots are empty, the `{% assign %}` before a `for` loop is missing — see Step 3. If the two `/work/` checks fail, Step 3b was skipped.
+
+**Never count a BEM base class by substring when a modifier extends it.** `'card__ring'` also matches `card__ring--lg`, so two ring spans count as four; `'card--work'` also matches `card--work-secondary`, so six cards count as twelve. Count the modifier, or parse the `class` attribute. This is the same class of error as using `grep -c` against minified single-line markup.
 
 - [ ] **Step 5: Commit**
 
