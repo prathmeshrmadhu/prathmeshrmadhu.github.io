@@ -2625,18 +2625,25 @@ Keep the front matter from Task 5 Step 14. Replace everything below it.
 jbuild() { docker run --rm -v "$PWD":/srv/jekyll -v jekyll_gems:/usr/local/bundle -w /srv/jekyll ruby:3.2 bash -c "bundle install --quiet && bundle exec jekyll build"; }
 jbuild
 python3 - <<'PY'
-import pathlib
+import pathlib, re
 p = pathlib.Path('_site/work/index.html').read_text()
-print("total work cards:", p.count('card--work'), "(expected 6)")
-print("feature cards:", p.count('card--work-feature'), "(expected 1)")
-print("secondary cards:", p.count('card--work-secondary'), "(expected 5)")
-print("kickers:", p.count('class="kicker"'), "(expected 6)")
+# Parse the class attribute; never substring-count a BEM base class, because
+# 'card--work' also matches 'card--work-secondary'.
+cards = re.findall(r'<article class="([^"]*)"', p)
+checks = {
+    "six work cards": len(cards) == 6,
+    "one feature": sum('card--work-feature' in c for c in cards) == 1,
+    "five secondary": sum('card--work-secondary' in c for c in cards) == 5,
+    "six kickers": p.count('class="kicker"') == 6,
+}
 for t in ["Real-time visual SLAM", "Defect detection", "Agentic", "retrieval", "survey", "tf-cnnvis"]:
-    print(f"  {t!r}:", t.lower() in p.lower())
+    checks[f"title: {t}"] = t.lower() in p.lower()
+for k, v in checks.items():
+    print(("PASS " if v else "FAIL ") + k)
 PY
 ```
 
-Expected: 6 cards, 1 feature, 5 secondary, **6 kickers** — every portfolio item has either `result:` or `result_note:`, so a count below 6 means a front-matter key was lost. All six title probes `True`.
+Expected: every line `PASS` — 6 cards, 1 feature, 5 secondary, **6 kickers**. Every portfolio item has either `result:` or `result_note:`, so a kicker count below 6 means a front-matter key was lost. All six title probes `True`.
 
 - [ ] **Step 4: Commit**
 
