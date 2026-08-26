@@ -8,6 +8,8 @@ redirect_from:
 
 {% include base_path %}
 
+<div class="cv" markdown="1">
+
 ## Education
 
 Dec 2018 – Nov 2022
@@ -177,19 +179,34 @@ Cloud
 {% assign pub_count = site.publications | size %}
 {% assign recent_pubs = site.publications | sort: 'date' | reverse %}
 
-{{ pub_count }} peer-reviewed publications. The five most recent are below; the [full list is on the research page]({{ base_path }}/research/).
+{{ pub_count }} peer-reviewed publications, {{ site.scholar_citations }} citations. The five most recent are below; the [full list is on the research page]({{ base_path }}/research/).
 {: .cv-note}
 
-  <ul>{% for post in recent_pubs limit: 5 %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
+<ul class="row-list">
+{% for post in recent_pubs limit: 5 %}
+  {% assign row_date = post.date | date: "%Y" %}
+  {% include row-list-item.html post=post date=row_date meta=post.venue %}
+{% endfor %}
+</ul>
 
 ## Talks
-  <ul>{% for post in site.talks %}
-    {% include archive-single-talk-cv.html %}
-  {% endfor %}</ul>
+
+<ul class="row-list">
+{% for post in site.talks reversed %}
+  {% assign row_date = post.date | date: "%Y" %}
+  {% capture row_meta %}{{ post.type }}{% if post.venue %} &middot; {{ post.venue }}{% endif %}{% if post.location %} &middot; {{ post.location }}{% endif %}{% endcapture %}
+  {% include row-list-item.html post=post date=row_date meta=row_meta %}
+{% endfor %}
+</ul>
 
 ## Teaching
-  <ul>{% for post in site.teaching reversed %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
+
+<ul class="row-list">
+{% for post in site.teaching reversed %}
+  {% assign row_date = post.date | date: "%Y" %}
+  {% capture row_meta %}{{ post.type }}{% if post.venue %} &middot; {{ post.venue }}{% endif %}{% if post.location %} &middot; {{ post.location }}{% endif %}{% endcapture %}
+  {% include row-list-item.html post=post date=row_date meta=row_meta %}
+{% endfor %}
+</ul>
+
+</div>
