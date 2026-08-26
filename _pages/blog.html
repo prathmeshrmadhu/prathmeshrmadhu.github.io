@@ -9,8 +9,12 @@ redirect_from:
 
 {% include base_path %}
 
-<div class="cardgrid">
-{% for post in site.posts %}
-  {% include blog-card.html %}
-{% endfor %}
-</div>
+<section class="band band--tight">
+  <div class="band__inner">
+    <div class="blog-grid">
+      {% for post in site.posts %}
+        {% include blog-card.html post=post %}
+      {% endfor %}
+    </div>
+  </div>
+</section>

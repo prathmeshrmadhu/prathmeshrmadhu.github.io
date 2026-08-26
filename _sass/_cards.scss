@@ -184,3 +184,26 @@
   gap: 14px;
   margin-top: 14px;
 }
+
+// --- Blog variant --------------------------------------------------------
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.card--blog {
+  padding: 26px 24px 28px;
+  border-radius: $r-work;
+
+  .card__title {
+    font: 600 20px/1.28 $sans;
+
+    a { color: inherit; }
+  }
+
+  &:hover .card__title a { color: $accent; }
+
+  .card__body { margin-top: 10px; }
+}
