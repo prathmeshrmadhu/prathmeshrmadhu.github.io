@@ -3193,7 +3193,7 @@ Everything from line 176 (`## Publications`) to the end of the file. Every `{: .
 ## Talks
 
 <ul class="row-list">
-{% for post in site.talks %}
+{% for post in site.talks reversed %}
   {% assign row_date = post.date | date: "%Y" %}
   {% capture row_meta %}{{ post.type }}{% if post.venue %} &middot; {{ post.venue }}{% endif %}{% if post.location %} &middot; {{ post.location }}{% endif %}{% endcapture %}
   {% include row-list-item.html post=post date=row_date meta=row_meta %}
@@ -3348,7 +3348,10 @@ checks = {
     "note": 'class="cv-note"' in cv,
     "derived pub count": "21 peer-reviewed publications" in cv,
     "citations from config": "320+ citations" in cv,
-    "five recent pubs + 3 talks + 2 teaching": cv.count('class="row') == 10,
+    # Tag-anchored: 'class="row' alone also matches the three
+    # <ul class="row-list"> wrappers, giving 13. Count the <li> tag.
+    "five recent pubs + 3 talks + 2 teaching": cv.count('<li class="row') == 10,
+    "three row-list wrappers": cv.count('class="row-list"') == 3,
     "no archive-single leftovers": 'archive__item' not in cv,
     "no literal IAL text": '{: .cv-' not in cv,
     "h2 not h1 for sections": '<h1' in cv and cv.count('<h1') == 1,
