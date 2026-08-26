@@ -1632,15 +1632,28 @@ for p in root.rglob('*.html'):
         if 'application/ld+json' in tag:
             continue
         execs.append((p.relative_to(root).as_posix(), tag))
-print("executable script tags:", len(execs), "(expected 0)")
+print("executable script tags:", len(execs), "(expected 1 per page — analytics only)")
 for e in execs[:5]:
     print("  ", e)
+ga = [e for e in execs if 'GoogleAnalyticsObject' not in (root / e[0]).read_text(errors='ignore')]
+print("non-analytics executable scripts:", len(ga), "(expected 0)")
 PY
 ```
 
-Expected: `js files in _site: []`, `assets/js exists: False`, six font files, roughly 90 KB, and `0` executable script tags.
+Expected: `js files in _site: []`, `assets/js exists: False`, six font files, roughly 90 KB, and **exactly one** executable script tag per page — the analytics snippet — and zero non-analytics scripts.
 
-**Do not assert `count('<script') == 0`.** `_includes/seo.html` emits two `<script type="application/ld+json">` blocks of structured data on every page — seven `<script` occurrences per page in total. That is JSON-LD metadata a crawler reads, not JavaScript a browser executes, and it stays. Only `src=` scripts and inline executable blocks are in scope.
+**Do not assert `count('<script') == 0`.** Two separate reasons:
+
+1. `_includes/seo.html` emits a `<script type="application/ld+json">` structured-data block on every page. That is JSON-LD metadata a crawler reads, not JavaScript a browser executes, and it stays.
+2. `_includes/scripts.html` still calls `analytics.html`, and `_config.yml` sets `analytics.provider: "google-universal"`, so every page carries an inline Google Analytics snippet. The spec's criterion 15 is "zero JavaScript **other than analytics**", so this is compliant as written.
+
+**Open question for the user, raised during execution — do not resolve unilaterally.** That analytics snippet is worth killing outright:
+
+- `analytics.google.tracking_id` in `_config.yml` is **empty**, so the emitted code is `ga('create', '', 'auto')` — it cannot collect anything.
+- It still fetches `//www.google-analytics.com/analytics.js` on every page view, which is a third-party request the design otherwise has zero of.
+- `analytics.js` is Universal Analytics, which Google **shut down in July 2023**. The product behind it no longer exists.
+
+Setting `analytics.provider: false` in `_config.yml` would make the site literally zero-JavaScript and zero-third-party-request. It is a one-line change. Because it alters the owner's tracking configuration, ask before doing it; if they want analytics later, GA4 needs a different snippet anyway.
 
 - [ ] **Step 5: Commit**
 
