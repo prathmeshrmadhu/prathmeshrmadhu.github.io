@@ -4,6 +4,9 @@ title: "About"
 excerpt: "Computer vision researcher and machine learning leader."
 ---
 
+<div class="band band--tight">
+<div class="band__inner">
+<div class="prose" markdown="1">
 I'm Prathmesh — a computer vision researcher and machine learning leader with over ten years spanning peer-reviewed research and production systems.
 
 I'm Senior Vice President of Machine Learning at [Infocusp Innovations](http://www.infocusp.com/), where I lead the computer vision group across concurrent LLM and computer vision programmes. Recent work includes TensorRT-accelerated visual SLAM for aerial platforms, agentic systems with LLM-as-a-judge evaluation pipelines, hybrid multimodal retrieval, and defect detection on production lines.
@@ -17,3 +20,7 @@ Outside of that, I'm fascinated by mathematics and drawn to problems built on it
 *Cogito, ergo sum.* — René Descartes
 
 If you'd like to start a conversation, message me on [X](https://x.com/prathmeshmadhu) or [LinkedIn](https://www.linkedin.com/in/prathmeshrmadhu/).
+
+</div>
+</div>
+</div>
