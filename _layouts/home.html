@@ -71,4 +71,25 @@ layout: base
   </div>
 </section>
 
+{% assign recent_posts = site.posts | slice: 0, 3 %}
+
+<section class="closing">
+  <div>
+    <h2 class="closing__title">Writing</h2>
+    <ul class="row-list">
+      {% for post in recent_posts %}
+        {% assign row_date = post.date | date: "%Y.%m" %}
+        {% include row-list-item.html post=post date=row_date %}
+      {% endfor %}
+    </ul>
+  </div>
+  <div>
+    <div class="invert">
+      <h2 class="invert__title">Working on something hard?</h2>
+      <p class="invert__body">Pune, India.</p>
+      <a class="btn" href="{{ base_path }}/contact/">Get in touch &rarr;</a>
+    </div>
+  </div>
+</section>
+
 {{ content }}

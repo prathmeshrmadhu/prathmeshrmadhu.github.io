@@ -1,0 +1,10 @@
+{% include base_path %}
+{% assign p = include.post %}
+<li class="row{% if include.meta and include.meta != '' %} row--meta{% endif %}">
+  <span class="row__date">{{ include.date }}</span>
+  <span class="row__main">
+    <a class="row__title" href="{{ base_path }}{{ p.url }}">{{ p.title }}</a>
+    {% if include.meta and include.meta != '' %}<span class="row__meta">{{ include.meta }}</span>{% endif %}
+    {% if p.paperurl %}<a class="row__paper" href="{{ p.paperurl }}">Paper &rarr;</a>{% endif %}
+  </span>
+</li>

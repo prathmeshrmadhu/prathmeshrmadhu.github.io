@@ -95,3 +95,132 @@
   font: 400 16.5px/1.65 $sans;
   color: $ink-70;
 }
+
+// --- Row list ------------------------------------------------------------
+// Fixed-width mono date, baseline-aligned with the title. Used for the
+// homepage writing rows and for publications, talks and teaching.
+
+.row-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row-list__year {
+  margin: 30px 0 14px;
+  font: 500 11px/1 $mono;
+  letter-spacing: 0.12em;
+  color: $accent;
+}
+
+.row-list__year:first-child { margin-top: 0; }
+
+.row {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+}
+
+.row__date {
+  flex: none;
+  width: 60px;
+  font: 400 11px/1.5 $mono;
+  color: $ink-52;
+}
+
+.row__main { min-width: 0; }
+
+.row__title {
+  font: 500 15.5px/1.4 $sans;
+  color: $ink;
+
+  &:hover { color: $accent; }
+}
+
+.row--meta .row__title { display: block; }
+
+.row__meta {
+  display: block;
+  margin-top: 4px;
+  font: 400 11px/1.5 $mono;
+  color: $ink-52;
+}
+
+.row__paper {
+  display: inline-block;
+  margin-top: 4px;
+  font: 500 11px/1.5 $mono;
+  color: $accent;
+}
+
+// --- Inverted block ------------------------------------------------------
+// Amber ground, teal text. Maximum ONE per page.
+
+.invert {
+  padding: 26px;
+  border-radius: $r-work;
+  background: $accent;
+  color: $ground;
+}
+
+.invert__title {
+  margin: 0;
+  font: 700 22px/1.2 $sans;
+  letter-spacing: -0.02em;
+  color: $ground;
+}
+
+.invert__body {
+  margin: 10px 0 20px;
+  font: 400 13.5px/1.55 $sans;
+  color: rgba(8, 48, 42, 0.82);
+}
+
+.invert__links {
+  display: flex;
+  gap: 18px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+  font: 500 11px/1 $mono;
+}
+
+.invert__links a {
+  color: rgba(8, 48, 42, 0.82);
+
+  &:hover { color: $ground; }
+}
+
+.btn {
+  display: inline-block;
+  padding: 11px 18px;
+  background: $ground;
+  color: $ink;
+  border-radius: $r-pill;
+  font: 600 12.5px/1 $sans;
+  transition: transform $t-lift, filter $t-lift;
+
+  &:hover {
+    color: $ink;
+    transform: translateY(-1px);
+    filter: brightness(1.25);
+  }
+}
+
+// The writing / contact split.
+.closing {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 48px;
+  padding: 46px $inset;
+  border-top: 1px solid $line-soft;
+}
+
+.closing__title {
+  margin: 0 0 22px;
+  font: 600 22px/1 $sans;
+  letter-spacing: -0.02em;
+}
