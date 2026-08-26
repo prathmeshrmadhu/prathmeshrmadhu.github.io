@@ -8,7 +8,7 @@
 # Site Settings
 locale                   : "en-US"
 title                    : "Prathmesh R. Madhu"
-scholar_citations           : "320+"
+scholar_citations        : "320+"
 title_separator          : "-"
 name                     : &name "Prathmesh R. Madhu"
 description              : &description "Senior Vice President - Machine Learning at Infocusp Innovations"
