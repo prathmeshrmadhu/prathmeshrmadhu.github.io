@@ -10,37 +10,79 @@ redirect_from:
 
 {% include base_path %}
 
-<p>My doctoral work, at the <a href="https://lme.tf.fau.de/">Chair of Pattern Recognition</a> at FAU Erlangen-Nürnberg, asked what happens to computer vision when you point it at images that were never photographs. The dissertation — <em>Concepts to Computational Constructs: Advanced Scene Understanding for Heterogeneous Artworks Using Deep Learning</em> — worked across art history, classical archaeology, and Christian archaeology, where the objects of study are paintings, vase decorations, and iconographic programmes rather than camera output.</p>
+<section class="band band--tight">
+  <div class="band__inner">
+    <div class="prose prose--intro">
+      <p>My doctoral work, at the <a href="https://lme.tf.fau.de/">Chair of Pattern Recognition</a> at FAU Erlangen-Nürnberg, asked what happens to computer vision when you point it at images that were never photographs. The dissertation — <em>Concepts to Computational Constructs: Advanced Scene Understanding for Heterogeneous Artworks Using Deep Learning</em> — worked across art history, classical archaeology, and Christian archaeology, where the objects of study are paintings, vase decorations, and iconographic programmes rather than camera output.</p>
 
-<p>That distinction is not cosmetic. Detection and pose estimation models inherit their priors from photographic data, so they fail on artwork in ways that are specific and instructive: a figure on an ancient vase is rendered by convention, not by projection. Labels are scarce, because producing them requires an art historian. And an art historian has no use for a prediction they cannot interrogate.</p>
+      <p>That distinction is not cosmetic. Detection and pose estimation models inherit their priors from photographic data, so they fail on artwork in ways that are specific and instructive: a figure on an ancient vase is rendered by convention, not by projection. Labels are scarce, because producing them requires an art historian. And an art historian has no use for a prediction they cannot interrogate.</p>
 
-<p>Those constraints shaped the work — pose estimation on vase paintings through perceptually-grounded style transfer, one-shot detection for heterogeneous artwork collections, and ICC and ICC++, which learn image composition as an explainable feature. The point of the latter was to recover the compositional structures art historians already reason about, in a form that lets them check the machine's reasoning against their own.</p>
+      <p>Those constraints shaped the work — pose estimation on vase paintings through perceptually-grounded style transfer, one-shot detection for heterogeneous artwork collections, and ICC and ICC++, which learn image composition as an explainable feature. The point of the latter was to recover the compositional structures art historians already reason about, in a form that lets them check the machine's reasoning against their own.</p>
 
-<p>I was also part of the computer vision team on <a href="https://odeuropa.eu/odeuropa-team/">Odeuropa</a>, a European research project on olfactory heritage, where the vision problem was to find references to smell in historical images — the objects that carry scent, and the people caught in the act of smelling. That work produced the ODOR dataset for olfactory object detection, SniffyArt for smelling persons, and the ODOR challenge at ICPR 2022. The targets are small, densely packed, and scattered across the frame, which makes olfactory reference detection a genuinely hard detection problem quite apart from its interest to historians.</p>
+      <p>I was also part of the computer vision team on <a href="https://odeuropa.eu/odeuropa-team/">Odeuropa</a>, a European research project on olfactory heritage, where the vision problem was to find references to smell in historical images — the objects that carry scent, and the people caught in the act of smelling. That work produced the ODOR dataset for olfactory object detection, SniffyArt for smelling persons, and the ODOR challenge at ICPR 2022. The targets are small, densely packed, and scattered across the frame, which makes olfactory reference detection a genuinely hard detection problem quite apart from its interest to historians.</p>
 
-<p>A separate thread runs through medical imaging: quantifying pulmonary hemosiderophages in cytology slides, and a series of mammography papers on breast density, luminal subtype, calcification, and abnormality classification in contrast-enhanced spectral mammography. The methods there are transfer learning and augmentation — attention-guided erasing, random histogram equalization, and a neighbourhood representation loss.</p>
-
-<h2 id="publications" class="archive__subtitle">Publications</h2>
-
-<p>For the full list of academic publications, check out my <a href="https://lme.tf.fau.de/person/madhu/">official-webpage</a>, <a href="https://scholar.google.co.in/citations?user=tEe1-TYAAAAJ&amp;hl=en">Google Scholar</a> profile.</p>
+      <p>A separate thread runs through medical imaging: quantifying pulmonary hemosiderophages in cytology slides, and a series of mammography papers on breast density, luminal subtype, calcification, and abnormality classification in contrast-enhanced spectral mammography. The methods there are transfer learning and augmentation — attention-guided erasing, random histogram equalization, and a neighbourhood representation loss.</p>
+    </div>
+  </div>
+</section>
 
 {% assign pubs = site.publications | sort: 'date' | reverse %}
 {% assign pubs_by_year = pubs | group_by_exp: "p", "p.date | date: '%Y'" %}
-{% for year in pubs_by_year %}
-  <h3 class="archive__year">{{ year.name }}</h3>
-  {% for post in year.items %}
-    {% include archive-single.html %}
-  {% endfor %}
-{% endfor %}
 
-<h2 id="talks" class="archive__subtitle">Talks</h2>
+<section class="band band--divided">
+  <div class="band__inner">
+    <div class="heading-row">
+      <h2 class="heading-row__title">Publications</h2>
+      <span class="heading-row__eyebrow">/ {{ pubs | size }} peer-reviewed</span>
+    </div>
+    <div class="prose">
+      <p>For the full list of academic publications, check out my <a href="https://lme.tf.fau.de/person/madhu/">official-webpage</a>, <a href="https://scholar.google.co.in/citations?user=tEe1-TYAAAAJ&amp;hl=en">Google Scholar</a> profile.</p>
+    </div>
+    {% for year in pubs_by_year %}
+      <p class="row-list__year">{{ year.name }}</p>
+      <ul class="row-list">
+        {% for post in year.items %}
+          {% comment %}
+            Publication dates are year-precision (every one is -01-01), so
+            date: "%b" would print a misleading "Jan" on all 21 rows, under a
+            heading that already states the year. Leave the gutter empty so the
+            titles stay aligned with the talks and teaching rows below.
+          {% endcomment %}
+          {% include row-list-item.html post=post date="" meta=post.venue %}
+        {% endfor %}
+      </ul>
+    {% endfor %}
+  </div>
+</section>
 
-{% for post in site.talks reversed %}
-  {% include archive-single-talk.html %}
-{% endfor %}
+<section class="band band--divided">
+  <div class="band__inner">
+    <div class="heading-row">
+      <h2 class="heading-row__title">Talks</h2>
+      <span class="heading-row__eyebrow">/ {{ site.talks | size }} total</span>
+    </div>
+    <ul class="row-list">
+      {% for post in site.talks reversed %}
+        {% assign row_date = post.date | date: "%Y" %}
+        {% capture row_meta %}{{ post.type }}{% if post.venue %} &middot; {{ post.venue }}{% endif %}{% if post.location %} &middot; {{ post.location }}{% endif %}{% endcapture %}
+        {% include row-list-item.html post=post date=row_date meta=row_meta %}
+      {% endfor %}
+    </ul>
+  </div>
+</section>
 
-<h2 id="teaching" class="archive__subtitle">Teaching</h2>
-
-{% for post in site.teaching reversed %}
-  {% include archive-single.html %}
-{% endfor %}
+<section class="band band--divided">
+  <div class="band__inner">
+    <div class="heading-row">
+      <h2 class="heading-row__title">Teaching</h2>
+      <span class="heading-row__eyebrow">/ {{ site.teaching | size }} total</span>
+    </div>
+    <ul class="row-list">
+      {% for post in site.teaching reversed %}
+        {% assign row_date = post.date | date: "%Y" %}
+        {% capture row_meta %}{{ post.type }}{% if post.venue %} &middot; {{ post.venue }}{% endif %}{% if post.location %} &middot; {{ post.location }}{% endif %}{% endcapture %}
+        {% include row-list-item.html post=post date=row_date meta=row_meta %}
+      {% endfor %}
+    </ul>
+  </div>
+</section>

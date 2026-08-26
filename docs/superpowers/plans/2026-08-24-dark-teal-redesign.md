@@ -2825,6 +2825,10 @@ The structure below shows the wrapper markup and the three row-list bands. `<!--
       <h2 class="heading-row__title">Publications</h2>
       <span class="heading-row__eyebrow">/ {{ pubs | size }} peer-reviewed</span>
     </div>
+    <!-- SIXTH PARAGRAPH — PASTE VERBATIM. The old page carried a paragraph
+         after the Publications <h2> linking to the FAU staff page and Google
+         Scholar. It is not part of the five-paragraph intro and would be
+         silently dropped if you only pasted the intro. Keep it here. -->
     {% for year in pubs_by_year %}
       <p class="row-list__year">{{ year.name }}</p>
       <ul class="row-list">
@@ -2844,7 +2848,7 @@ The structure below shows the wrapper markup and the three row-list bands. `<!--
       <span class="heading-row__eyebrow">/ {{ site.talks | size }} total</span>
     </div>
     <ul class="row-list">
-      {% for post in site.talks %}
+      {% for post in site.talks reversed %}
         {% assign row_date = post.date | date: "%Y" %}
         {% capture row_meta %}{{ post.type }}{% if post.venue %} &middot; {{ post.venue }}{% endif %}{% if post.location %} &middot; {{ post.location }}{% endif %}{% endcapture %}
         {% include row-list-item.html post=post date=row_date meta=row_meta %}
@@ -2871,6 +2875,8 @@ The structure below shows the wrapper markup and the three row-list bands. `<!--
 ```
 
 The `group_by_exp` year grouping and the `sort: 'date' | reverse` are carried over unchanged. The reverse sort was a **bug fix** in Phase 3, not styling — publications were previously listed oldest-first. Do not drop it.
+
+**`reversed` on the talks and teaching loops is load-bearing for the same reason.** Jekyll sorts collection documents by date *ascending*, so `{% for post in site.talks %}` without `reversed` silently lists the 2018 talk first — the identical regression, on a different collection. The old page had `reversed` on both loops; keep it on both.
 
 Deleting `_sass/_archive.scss` in Task 18 incidentally resolves the old publication-title styling (ochre + serif + bold + underline, all stacked). That is a side effect of the rewrite, not a re-opened item.
 
