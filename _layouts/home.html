@@ -47,4 +47,28 @@ layout: base
   </div>
 </section>
 
+{% assign work_count = site.portfolio | size %}
+{% assign ordered_work = site.portfolio | sort: 'order' %}
+{% assign featured = ordered_work | slice: 0, 1 %}
+{% assign seconds = ordered_work | slice: 1, 2 %}
+
+<section class="band band--tight">
+  <div class="band__inner">
+    <div class="heading-row heading-row--split">
+      <h2 class="heading-row__title">Selected work</h2>
+      <a class="heading-row__link" href="{{ base_path }}/work/">View all {{ work_count }} &rarr;</a>
+    </div>
+    <div class="work-grid">
+      {% for post in featured %}
+        {% include work-card.html post=post variant="feature" %}
+      {% endfor %}
+      <div class="work-grid__stack">
+        {% for post in seconds %}
+          {% include work-card.html post=post variant="secondary" %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
 {{ content }}

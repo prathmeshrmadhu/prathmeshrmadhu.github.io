@@ -105,3 +105,75 @@
   border-radius: 50%;
   background: conic-gradient($accent 0 25%, rgba(244, 242, 237, 0.22) 25% 100%);
 }
+
+// --- Work variants -------------------------------------------------------
+
+.work-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 14px;
+}
+
+.work-grid__stack {
+  display: grid;
+  gap: 14px;
+}
+
+.card--work {
+  border-radius: $r-work;
+  overflow: hidden;
+
+  .card__title a { color: inherit; }
+  &:hover .card__title a { color: $accent; }
+}
+
+.card__content { position: relative; }
+
+// Feature: amber diagonal wash plus two concentric decorative rings.
+.card--work-feature {
+  padding: 34px 34px 30px;
+  background: linear-gradient(135deg, rgba(240, 162, 2, 0.2), rgba(244, 242, 237, 0.05));
+
+  .kicker { margin-bottom: 16px; }
+
+  .card__title {
+    max-width: 400px;
+    font: 600 30px/1.15 $sans;
+    letter-spacing: -0.02em;
+  }
+
+  .card__body {
+    max-width: 420px;
+    margin-top: 12px;
+    font-size: 14.5px;
+    color: $ink-68;
+  }
+}
+
+.card__ring {
+  position: absolute;
+  border: 1px solid $line-ring;
+  border-radius: 50%;
+  pointer-events: none;
+
+  &--lg {
+    right: -40px;
+    bottom: -40px;
+    width: 200px;
+    height: 200px;
+  }
+  &--sm {
+    right: 10px;
+    bottom: 10px;
+    width: 100px;
+    height: 100px;
+  }
+}
+
+.card--work-secondary {
+  padding: 24px;
+
+  .kicker { margin-bottom: 12px; }
+
+  .card__title { font: 600 19px/1.25 $sans; }
+}
