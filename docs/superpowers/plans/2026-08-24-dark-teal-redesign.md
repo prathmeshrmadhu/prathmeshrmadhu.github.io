@@ -3410,16 +3410,12 @@ layout: base
 
       <h1 class="page-title__h1">{{ page.title }}</h1>
 
-      <p class="detail__meta">
-        {% if page.date %}<span>{{ page.date | date: "%B %Y" }}</span>{% endif %}
-        {% if page.venue and page.type %}<span>{{ page.venue }}</span>{% endif %}
-        {% if page.location %}<span>{{ page.location }}</span>{% endif %}
-      </p>
+      {% capture detail_meta %}{% if page.date %}<span>{{ page.date | date: "%B %Y" }}</span>{% endif %}{% if page.venue and page.type %}<span>{{ page.venue }}</span>{% endif %}{% if page.location %}<span>{{ page.location }}</span>{% endif %}{% endcapture %}
+      {% if detail_meta != '' %}<p class="detail__meta">{{ detail_meta }}</p>{% endif %}
 
-      {% if page.paperurl or page.link %}
+      {% if page.paperurl %}
         <p class="detail__actions">
-          {% if page.paperurl %}<a class="btn btn--outline" href="{{ page.paperurl }}">Read the paper &rarr;</a>{% endif %}
-          {% if page.link %}<a class="btn btn--outline" href="{{ page.link }}">More &rarr;</a>{% endif %}
+          <a class="btn btn--outline" href="{{ page.paperurl }}">Read the paper &rarr;</a>
         </p>
       {% endif %}
     </div>
@@ -3446,6 +3442,10 @@ layout: base
 ```
 
 `citation` lives here, on the detail page, and deliberately not in the publication row — it is long-form and would wreck the row rhythm.
+
+**Why the meta line is a `capture` and not a bare `<p>`.** Front matter was audited across all 36 files. The six portfolio items carry no `date`, no `venue`, no `type` and no `location` — only `result`/`result_note`, `excerpt`, `order` and `tags`. A bare `<p class="detail__meta">` would render empty on all six, contributing a stray 16px top margin under the H1. The capture emits the element only when it has content, and stays correct if a collection's front matter changes.
+
+**Why there is no `page.link` branch.** No file in any of the five collections carries a `link` key — the audit found `citation`(21), `paperurl`(21), `venue`(26), `type`(5), `location`(5), `result`(4), `result_note`(2), `tags`(10), `order`(6), `excerpt`(9). `link` is a Minimal Mistakes portfolio convention this site never used, so a `{% if page.link %}` branch would be dead code. Do not add it.
 
 - [ ] **Step 2: Append the detail-page styles to `_sass/_prose.scss`**
 
@@ -3510,23 +3510,38 @@ for p in root.rglob('*.html'):
     (details if 'class="detail"' in t else misses).append(rel)
 print("detail pages:", len(details), "(expected 36)")
 print("NOT rendered via detail.html:", misses, "(expected [])")
+
+# No empty meta paragraph anywhere, and none at all on the six portfolio items.
+empty = [d for d in details if '<p class="detail__meta"></p>' in root.joinpath(d).read_text()]
+print("empty meta paragraphs:", empty, "(expected [])")
+port = [d for d in details if d.startswith('portfolio/')]
+print("portfolio pages:", len(port), "(expected 6)")
+print("  with a meta line:", sum('detail__meta' in root.joinpath(d).read_text() for d in port), "(expected 0)")
+
+# Per-collection expectations, from the front matter audit.
+pubs = [d for d in details if d.startswith('publications/')]
+print("publications:", len(pubs), "(expected 21)")
+print("  with a citation:", sum('detail__citation' in root.joinpath(d).read_text() for d in pubs), "(expected 21)")
+print("  with a paper button:", sum('btn--outline' in root.joinpath(d).read_text() for d in pubs), "(expected 21)")
 PY
 ```
 
-Expected: `detail pages: 36` and an empty miss list. If a page appears in `misses`, its collection default in `_config.yml` still points elsewhere — recheck Task 5 Step 1.
+Expected: `detail pages: 36`, an empty miss list, no empty meta paragraphs, 6 portfolio pages with 0 meta lines, and 21 publications each with a citation and a paper button. If a page appears in `misses`, its collection default in `_config.yml` still points elsewhere — recheck Task 5 Step 1.
 
 - [ ] **Step 4: Check the longest post as the prose reference case**
 
 `_posts/2020-07-12-rip-banerjee-sir.md` is the longest content in the repo at 12.7 KB and is the reference for prose styling.
 
+**Do not glob for this file.** The post carries `redirect_from: /posts/2012/08/rip-banerjee-sir/`, so a glob on `*banerjee*` matches two paths and the alphabetically-first is the 617-byte redirect stub, not the 12.7 KB page. Address the real permalink directly and assert the size, so a stub can never masquerade as the page.
+
 ```bash
 python3 - <<'PY'
-import pathlib, glob
-p = glob.glob('_site/**/rip-banerjee*/index.html', recursive=True) + \
-    glob.glob('_site/**/*banerjee*.html', recursive=True)
-f = pathlib.Path(sorted(set(p))[0])
+import pathlib
+f = pathlib.Path('_site/posts/2020/07/12/rip-banerjee-sir/index.html')
 t = f.read_text()
 print("path:", f)
+print("size:", len(t), "(must be > 10000 — guards against the redirect stub)")
+assert len(t) > 10000, "got the redirect stub, not the post"
 for tag in ['<p', '<h2', '<h3', '<ul', '<ol', '<blockquote', '<pre', '<table', '<img', 'footnote']:
     print(f"  {tag}: {t.count(tag)}")
 print("wrapped in .prose:", 'class="prose"' in t)
