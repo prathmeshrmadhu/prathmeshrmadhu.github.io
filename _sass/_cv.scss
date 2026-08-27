@@ -40,14 +40,18 @@
   color: $ink-52;
 }
 
-.cv ul {
+// Scoped to unclassed lists — the `*` bullets under each role. A bare
+// `.cv ul` (0,1,1) outranks .cv-chips and .row-list (both 0,1,0) and would
+// leak padding-left onto them, indenting /cv/'s chip rows and row lists
+// while the same primitives sit flush on / and /research/.
+.cv ul:not([class]) {
   margin: 12px 0 0;
   padding-left: 1.2em;
   font: 400 14.5px/1.65 $sans;
   color: $ink-60;
 }
 
-.cv ul li { margin-bottom: 6px; }
+.cv ul:not([class]) li { margin-bottom: 6px; }
 
 .cv a {
   color: $accent;
