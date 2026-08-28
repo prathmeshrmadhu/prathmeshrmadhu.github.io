@@ -3573,21 +3573,37 @@ in the publication row."
 
 ## Task 17: Syntax highlighting on a dark ground
 
-`_config.yml` sets `highlighter: rouge`. One post (`_posts/2020-09-30-why-fastai.md`) contains code. The old theme's `_syntax.scss` was built for a cream ground and would be illegible.
+`_config.yml` sets `highlighter: rouge`. The old theme's `_syntax.scss` was built for a cream ground and would be illegible.
+
+**Corrected premise — the original plan was wrong on two counts.** It claimed `_posts/2020-09-30-why-fastai.md` contains code. It does not: the file has **zero** code fences, and the `    * ` lines that look like indented code blocks are nested markdown list items. Audited across `_posts`, `_publications`, `_portfolio`, `_talks` and `_teaching`, **no content file anywhere in the site contains a fenced or indented code block.** The only `highlighter-rouge` markup in the whole build is two inline `<code>` spans on `markdown_generator/index.html` — the repo tooling readme that is itself flagged for possible exclusion at the Task 21 review gate. Inline code spans are already covered by `.prose code`.
+
+**Consequence for the palette.** The original Step 1 introduced two new hues, `#9BD4B4` (mint) and `#FF8A7A` (salmon), as raw hex literals outside `_tokens.scss`. Three problems: `_tokens.scss` states "Two hues only... Do not add a third hue"; the step's own header comment says "code is differentiated by ink alpha, not by rainbow colour" and then immediately contradicts itself; and both hues would be added for content that does not exist. Neither is a contrast failure — measured on `$ground`, mint is 8.50:1 and salmon 6.25:1, both comfortably AA. They are a discipline failure.
+
+So this task ships the **minimum** that keeps rouge legible if a code block is ever added, using existing tokens only. `_syntax.scss` is already in the `main.scss` import list and rouge is already the configured highlighter, so the rules must exist — but they will not invent hues for zero content.
 
 **Files:**
 - Rewrite: `_sass/_syntax.scss`
 
 - [ ] **Step 1: Write `_sass/_syntax.scss`**
 
-Full replacement of the placeholder. Deliberately small — the site has one code-bearing post. `_prose.scss` already styles `pre` and `code`; this file only colours tokens.
+Full replacement of the placeholder. `_prose.scss` already styles `pre` and `code`, so this file only colours tokens — and colours them with existing tokens only.
 
 ```scss
 // ---------------------------------------------------------------------------
-// Rouge token colours on the dark ground. Intentionally minimal — the palette
-// is two hues, so code is differentiated by ink alpha, not by rainbow colour.
+// Rouge token colours on the dark ground.
+//
+// No content file in this site currently contains a code block — these rules
+// exist so that rouge output is legible the day one is added, and for the two
+// inline `highlighter-rouge` spans in markdown_generator/readme.md.
+//
+// Deliberately no new hues. The palette is $ground plus $accent, so code is
+// differentiated by ink alpha and by the accent alone. Every colour below is
+// a token from _tokens.scss and every one measures AA or better on $ground:
+// $ink 12.80:1, $ink-70 7.00:1, $accent 6.73:1, $ink-60 5.54:1, $ink-52 4.54:1.
 // ---------------------------------------------------------------------------
 
+// `.prose pre` owns the block's background and border. Keep this transparent
+// so rouge does not paint a second, lighter panel on top of it.
 .highlight,
 .highlighter-rouge .highlight {
   background: transparent;
@@ -3595,48 +3611,79 @@ Full replacement of the placeholder. Deliberately small — the site has one cod
 }
 
 .highlight {
-  .c, .c1, .cm, .cs, .cd { color: $ink-52; font-style: italic; }   // comments
-  .k, .kc, .kd, .kn, .kp, .kr, .kt { color: $accent; }             // keywords
-  .o, .ow                          { color: $ink-70; }             // operators
-  .s, .s1, .s2, .sb, .sc, .sd, .se, .sh, .si, .sx, .sr, .ss { color: #9BD4B4; }
-  .m, .mf, .mh, .mi, .mo           { color: #9BD4B4; }             // numbers
-  .nf, .nb, .nc                    { color: $ink; }                // functions
-  .n, .na, .nn, .nv, .nx           { color: $ink-70; }
-  .p, .pi                          { color: $ink-60; }             // punctuation
-  .err                             { color: #FF8A7A; }
-  .gd  { color: #FF8A7A; }
-  .gi  { color: #9BD4B4; }
-  .ge  { font-style: italic; }
-  .gs  { font-weight: 600; }
+  // Comments recede to the AA floor.
+  .c, .c1, .cm, .cs, .cd { color: $ink-52; font-style: italic; }
+
+  // Keywords are the one place code borrows the brand accent.
+  .k, .kc, .kd, .kn, .kp, .kr, .kt { color: $accent; }
+
+  // Everything nameable sits at full ink so it reads as the signal.
+  .nf, .nb, .nc, .s, .s1, .s2, .sb, .sc, .sd, .se, .sh, .si, .sx, .sr, .ss,
+  .m, .mf, .mh, .mi, .mo { color: $ink; }
+
+  // Identifiers and operators at body weight.
+  .n, .na, .nn, .nv, .nx, .o, .ow { color: $ink-70; }
+
+  // Punctuation recedes.
+  .p, .pi { color: $ink-60; }
+
+  // Diff and emphasis markers carry no colour of their own.
+  .err, .gd { color: $accent; }
+  .gi { color: $ink; }
+  .ge { font-style: italic; }
+  .gs { font-weight: 600; }
 }
 ```
 
-`#9BD4B4` is a desaturated mint — it reads as teal-family rather than as a third brand hue, and it keeps strings distinguishable from keywords. Verify its contrast in Task 21.
+Strings, numbers and function names collapsing to a single `$ink` is a deliberate trade: it loses some at-a-glance token separation that a rainbow theme would give, in exchange for holding the two-hue rule. With zero code blocks in the site, that trade costs nothing today. If the user later publishes a code-heavy post and wants richer highlighting, that is the moment to add tokens for it — in `_tokens.scss`, not inline here.
 
-- [ ] **Step 2: Build and verify against the one code-bearing post**
+- [ ] **Step 2: Build and verify**
 
 ```bash
+jclean() { docker run --rm -v "$PWD":/srv/jekyll -w /srv/jekyll ruby:3.2 bash -c "rm -rf _site"; }
 jbuild() { docker run --rm -v "$PWD":/srv/jekyll -v jekyll_gems:/usr/local/bundle -w /srv/jekyll ruby:3.2 bash -c "bundle install --quiet && bundle exec jekyll build"; }
-jbuild
+jclean && jbuild
 python3 - <<'PY'
-import pathlib, glob
+import pathlib, re
 css = pathlib.Path('_site/assets/css/main.css').read_text()
-print("rouge rules compiled:", '.highlight' in css)
-print("light-ground leftovers:", '#f8f8f8' in css or '#fff8f8' in css, "(expected False)")
-hits = [p for p in glob.glob('_site/**/*.html', recursive=True)
-        if 'highlight' in pathlib.Path(p).read_text()]
-print("pages with highlighted code:", len(hits))
-for h in hits: print("  ", h)
+scss = pathlib.Path('_sass/_syntax.scss').read_text()
+checks = {
+    "rouge rules compiled": '.highlight' in css,
+    "transparent, not a second panel": '.highlight,.highlighter-rouge .highlight{background:transparent' in css.replace('\n',''),
+    "no light-ground leftovers": not any(h in css.lower() for h in ['#f8f8f8', '#fff8f8', '#f0f0f0', '#eef']),
+    # The whole point of the rewrite: no hex literals, so no new hues.
+    "no hex literals in _syntax.scss": not re.search(r'#[0-9a-fA-F]{3,6}\b', scss),
+    "mint hue absent": '9bd4b4' not in css.lower(),
+    "salmon hue absent": 'ff8a7a' not in css.lower(),
+    "no shadows": 'box-shadow' not in scss,
+}
+for k, v in checks.items():
+    print(("PASS " if v else "FAIL ") + k)
 PY
 ```
 
-Expected: `rouge rules compiled: True`, `light-ground leftovers: False`. If zero pages carry highlighted code, the fastai post uses indented rather than fenced blocks — that is fine, the rules still exist for future content.
+Expected: every line `PASS`.
+
+The site has no code blocks, so there is nothing to eyeball. Confirm that stays true rather than assuming it:
+
+```bash
+grep -rln '```' _posts _publications _portfolio _talks _teaching 2>/dev/null || echo "no fenced code in any content file (expected)"
+grep -o 'highlighter-rouge' -r _site --include=*.html -l
+```
+
+Expected: the first prints the "no fenced code" message; the second lists only `_site/markdown_generator/index.html`. If a content file has since gained a code block, build it and look at it in a browser before committing.
 
 - [ ] **Step 3: Commit**
 
 ```bash
 git add _sass/_syntax.scss
-git commit -m "feat: dark-ground syntax highlighting"
+git commit -m "feat: dark-ground syntax highlighting, tokens only
+
+No content file in the site contains a code block, so these rules exist
+for legibility the day one is added. Deliberately no new hues: the two
+the plan proposed (mint, salmon) both pass contrast but would have broken
+the two-hue rule _tokens.scss states, as raw hex outside that file, for
+zero content."
 ```
 
 ---
