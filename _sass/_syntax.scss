@@ -1,1 +1,44 @@
-// rewritten in a later task
+// ---------------------------------------------------------------------------
+// Rouge token colours on the dark ground.
+//
+// No content file in this site currently contains a code block — these rules
+// exist so that rouge output is legible the day one is added, and for the two
+// inline `highlighter-rouge` spans in markdown_generator/readme.md.
+//
+// Deliberately no new hues. The palette is $ground plus $accent, so code is
+// differentiated by ink alpha and by the accent alone. Every colour below is
+// a token from _tokens.scss and every one measures AA or better on $ground:
+// $ink 12.80:1, $ink-70 7.00:1, $accent 6.73:1, $ink-60 5.54:1, $ink-52 4.54:1.
+// ---------------------------------------------------------------------------
+
+// `.prose pre` owns the block's background and border. Keep this transparent
+// so rouge does not paint a second, lighter panel on top of it.
+.highlight,
+.highlighter-rouge .highlight {
+  background: transparent;
+  color: $ink-70;
+}
+
+.highlight {
+  // Comments recede to the AA floor.
+  .c, .c1, .cm, .cs, .cd { color: $ink-52; font-style: italic; }
+
+  // Keywords are the one place code borrows the brand accent.
+  .k, .kc, .kd, .kn, .kp, .kr, .kt { color: $accent; }
+
+  // Everything nameable sits at full ink so it reads as the signal.
+  .nf, .nb, .nc, .s, .s1, .s2, .sb, .sc, .sd, .se, .sh, .si, .sx, .sr, .ss,
+  .m, .mf, .mh, .mi, .mo { color: $ink; }
+
+  // Identifiers and operators at body weight.
+  .n, .na, .nn, .nv, .nx, .o, .ow { color: $ink-70; }
+
+  // Punctuation recedes.
+  .p, .pi { color: $ink-60; }
+
+  // Diff and emphasis markers carry no colour of their own.
+  .err, .gd { color: $accent; }
+  .gi { color: $ink; }
+  .ge { font-style: italic; }
+  .gs { font-weight: 600; }
+}
