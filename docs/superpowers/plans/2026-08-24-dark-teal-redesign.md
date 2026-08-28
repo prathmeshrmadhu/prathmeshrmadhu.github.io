@@ -3735,12 +3735,18 @@ print("--- scan complete ---")
 PY
 ```
 
-Expected: only `--- scan complete ---`. Two acceptable exceptions if they appear:
+**This scan substring-matches, so it over-reports.** It was run before execution and produced **six** hits, every one a false positive. They are recorded here with their resolutions so the next run does not re-investigate them. If you see exactly these six, proceed. Anything else is a real reference — fix the referring file before deleting.
 
-- `footer.html` matching `_includes/footer/custom.html` — a path-fragment false positive, not a reference.
-- `'comment'` matching a `<!-- comment -->` in your own new files — read the hit and judge.
+| Reported | Where | Why it is not a reference |
+|---|---|---|
+| `breadcrumbs` | `_config.yml` | The setting `breadcrumbs: false`, plus a mention inside a comment. A config key, not an include call. Becomes an inert dead key. |
+| `paginator` | `_includes/seo.html` | Liquid's **`paginator` object** from jekyll-paginate (`paginator.previous_page`), not `{% include paginator.html %}`. `seo.html` is retained; the variable is simply nil because pagination is unused. |
+| `toc` | `_config.yml`, `_data/ui-text.yml`, `analytics-providers/google.html`, `_pages/cv.md`, `_portfolio/agentic-systems-in-a-regulated-domain.md` | Substring of **"protocol"** / "protocols" in every case but `ui-text.yml`, where it is the `toc_label` string. |
+| `comment` | `_config.yml`, `_data/ui-text.yml`, `comments-providers/*`, `_layouts/compress.html`, `_pages/research.html` | The English word. `compress.html` legitimately handles HTML comments; `research.html` carries the `{% comment %}` block explaining the publication-date fix. `comments-providers/*` are themselves being deleted. |
+| `footer.html` | `_layouts/base.html` | Substring of **`site-footer.html`**, which is retained. `base.html` also includes `footer/custom.html`; the `footer/` directory is deliberately kept and is live. |
+| `"page"` | `_includes/site-header.html` | The ARIA attribute value `aria-current="page"`. That token was meant to catch `@import "page"` in `main.scss`. |
 
-Anything else is a real reference. Fix the referring file before deleting.
+This is the same substring trap that bit the count assertions in Tasks 9, 10, 11, 12 and 15. Read every hit before acting on it. Do not skip a deletion because the scan is noisy, and do not trust a quiet scan as proof on its own — the clean build in Step 5 is the real safety net.
 
 - [ ] **Step 2: Delete the layouts**
 
@@ -3791,6 +3797,38 @@ Expected exactly twelve files: `_base.scss`, `_cards.scss`, `_cv.scss`, `_footer
 
 Deleting `_variables.scss` also removes the latent bug where `$medium` was declared twice and the non-`!default` declaration won at **500px** — which is why the Phase 3 and 3.1 card grids went two-up on a large phone. `_tokens.scss` replaces it with `$bp-md: 768px`.
 
+- [ ] **Step 4b: Retheme text selection in `_sass/_reset.scss`**
+
+The "File structure" table calls `_reset.scss` theme-neutral apart from the three patched external dependencies. **That is not quite true, and this is the last Minimal Mistakes visual leftover in the build.** Lines 31–40 hardcode selection colours:
+
+```scss
+::-moz-selection {
+  color: #fff;
+  background: #000;
+}
+
+::selection {
+  color: #fff;
+  background: #000;
+}
+```
+
+So selecting any text on a deep-teal page flashes white-on-black — off-palette, and visible to anyone who drags across a paragraph or double-clicks a word. Replace both blocks with:
+
+```scss
+::-moz-selection {
+  color: $ground;
+  background: $accent;
+}
+
+::selection {
+  color: $ground;
+  background: $accent;
+}
+```
+
+`$ground` on `$accent` measures **6.73:1**, comfortably AA, and reuses the amber-with-teal-text pairing the `.invert` block already establishes. This also takes the last two hex literals outside `_tokens.scss` down to zero — after this step, `_tokens.scss` holds the only three hex values in the whole design system.
+
 - [ ] **Step 5: Clean-build and measure the CSS**
 
 ```bash
@@ -3812,22 +3850,37 @@ print("html pages:", len(pages), "(expected 53)")
 for needle in ['author_profile', 'page__content', 'masthead', 'fa fa-', 'fab fa-']:
     n = sum(p.read_text(errors='ignore').count(needle) for p in pages)
     print(f"  {needle!r} in built html:", n, "(expected 0)")
+
+# Step 4b: selection is rethemed, and the white-on-black is gone.
+print("selection rethemed:", '::selection{color:#08302a;background:#f0a202}' in body.lower().replace(' ', ''))
+print("no white-on-black selection:", 'color:#fff;background:#000' not in body.replace(' ', ''))
+
+# With Step 4b done, _tokens.scss should hold the only hex in the design system.
+import re, pathlib as _p
+offenders = {f.name: len(re.findall(r'#[0-9a-fA-F]{3,6}\b', f.read_text()))
+             for f in _p.Path('_sass').glob('*.scss')
+             if f.name != '_tokens.scss' and re.search(r'#[0-9a-fA-F]{3,6}\b', f.read_text())}
+print("hex literals outside _tokens.scss:", offenders, "(expected {})")
 PY
 ```
 
-Expected: `main.css` well under 25,600 bytes, every `in css` line `False`, `html pages: 53`, and every `in built html` count `0`.
+Expected: `main.css` well under 25,600 bytes, every `in css` line `False`, `html pages: 53`, every `in built html` count `0`, both selection lines `True`, and `hex literals outside _tokens.scss: {}`.
+
+If `selection rethemed` is `False`, print the actual `::selection` rule out of `main.css` and compare — the minifier's exact spacing and case for hex values is the usual cause, not a real failure. **Report it rather than editing the assertion.**
 
 `sass.style: compressed` is already set in `_config.yml`, so both the 102,456-byte baseline and this figure are **minified**. The old number was not unminified bloat — it was genuinely that much CSS, most of it Font Awesome.
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add -u
+git add -u _sass/_reset.scss
 git commit -m "refactor: delete the Minimal Mistakes visual layer
 
 Six layouts, twenty-five includes, thirteen sass partials, and the susy,
 font-awesome and magnific-popup vendor libraries. Also removes the
-double-declared \$medium that broke card grids at 500px."
+double-declared \$medium that broke card grids at 500px, and rethemes the
+last MM visual leftover: ::selection was hardcoded white-on-black, which
+flashed off-palette on every text drag."
 ```
 
 ---
