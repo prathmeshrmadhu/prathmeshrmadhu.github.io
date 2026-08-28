@@ -3498,7 +3498,11 @@ python3 - <<'PY'
 import pathlib
 root = pathlib.Path('_site')
 routes = {'index.html', 'work/index.html', 'research/index.html', 'blog/index.html',
-          'about/index.html', 'cv/index.html', 'contact/index.html', '404.html'}
+          'about/index.html', 'cv/index.html', 'contact/index.html', '404.html',
+          # Repo tooling doc with no front matter, picked up by the `type: pages`
+          # default and published at /markdown_generator/. Pre-existing since
+          # b1c0c4c, not one of the 36. See the note under Task 21.
+          'markdown_generator/index.html'}
 details, misses = [], []
 for p in root.rglob('*.html'):
     rel = p.relative_to(root).as_posix()
@@ -3519,7 +3523,11 @@ print("portfolio pages:", len(port), "(expected 6)")
 print("  with a meta line:", sum('detail__meta' in root.joinpath(d).read_text() for d in port), "(expected 0)")
 
 # Per-collection expectations, from the front matter audit.
-pubs = [d for d in details if d.startswith('publications/')]
+# NOTE: the prefix is `publication/`, SINGULAR. Every file in _publications
+# sets an explicit `permalink: /publication/...` that overrides the collection
+# default `/:collection/:path/`. `_site/publications/` also exists but is a
+# 517-byte redirect stub. Do not "correct" this to the plural.
+pubs = [d for d in details if d.startswith('publication/')]
 print("publications:", len(pubs), "(expected 21)")
 print("  with a citation:", sum('detail__citation' in root.joinpath(d).read_text() for d in pubs), "(expected 21)")
 print("  with a paper button:", sum('btn--outline' in root.joinpath(d).read_text() for d in pubs), "(expected 21)")
@@ -4420,7 +4428,9 @@ Report to the user:
 4. Icon fonts: 2.9 MB → 0; self-hosted text fonts ~82 KB.
 5. The nav duplication flag from "Before you start" — `Contact` appears both as a nav item and as the `Let's talk` pill, both pointing at `/contact/`. Ask whether to drop one.
 6. The three real posts date `2026.03`, `2020.09` and `2020.07`. The design's writing section implies regular output; the reality is one post in 2026 and two from 2020. This is accurate content and ships as-is — flagged so the sparseness reads as expected rather than as a bug.
-7. How to review locally: `python3 -m http.server 4000 --directory _site`.
+7. **Publication `venue` strings are Google Scholar scrapes** (found during Task 16). They carry page ranges and volume numbers — `Heritage Preservation: A Computational Approach, 67-86`, `Pattern Recognition 136, 109153` — and six are truncated mid-word with an ellipsis, e.g. `Proceedings of the 1st Workshop on Structuring and Understanding of  …`. The redesign surfaces `venue` in three places: the publication row meta on `/research/` and `/cv/`, and the kicker on all 21 publication detail pages. It reads oddly in all three. **Do not rewrite these unilaterally** — the truncated ones cannot be repaired without looking up each paper, which means inventing the user's content. Ask whether he wants to clean the 21 `venue:` fields, or whether the plan should strip the trailing page/volume fragment at render time.
+8. **`markdown_generator/readme.md` publishes at `/markdown_generator/`** (found during Task 16). It is repo tooling documentation with no front matter, picked up by the `type: pages` default, and has been public since `b1c0c4c` — long before this branch. Not one of the 36 detail pages. A one-line `exclude:` entry in `_config.yml` would drop it, but that changes the page count this task asserts, and it is pre-existing rather than something the redesign introduced. Ask.
+9. How to review locally: `python3 -m http.server 4000 --directory _site`.
 
 **Then stop.** A human visual review of the `redesign` branch is a merge precondition. Do not merge to `master` without explicit approval.
 
