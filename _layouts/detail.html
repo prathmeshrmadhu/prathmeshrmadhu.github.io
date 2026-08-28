@@ -2,11 +2,31 @@
 layout: base
 ---
 
+{% include base_path %}
+
 <article class="detail">
   <div class="page-title">
     <div class="page-title__inner">
-      {% if page.venue %}<p class="kicker">{{ page.venue }}</p>{% endif %}
+      {% if page.result %}
+        <p class="kicker">{{ page.result }}</p>
+      {% elsif page.result_note %}
+        <p class="kicker">{{ page.result_note }}</p>
+      {% elsif page.type %}
+        <p class="kicker">{{ page.type }}</p>
+      {% elsif page.venue %}
+        <p class="kicker">{{ page.venue }}</p>
+      {% endif %}
+
       <h1 class="page-title__h1">{{ page.title }}</h1>
+
+      {% capture detail_meta %}{% if page.date %}<span>{{ page.date | date: "%B %Y" }}</span>{% endif %}{% if page.venue and page.type %}<span>{{ page.venue }}</span>{% endif %}{% if page.location %}<span>{{ page.location }}</span>{% endif %}{% endcapture %}
+      {% if detail_meta != '' %}<p class="detail__meta">{{ detail_meta }}</p>{% endif %}
+
+      {% if page.paperurl %}
+        <p class="detail__actions">
+          <a class="btn btn--outline" href="{{ page.paperurl }}">Read the paper &rarr;</a>
+        </p>
+      {% endif %}
     </div>
   </div>
 
@@ -15,6 +35,16 @@ layout: base
       <div class="prose">
         {{ content }}
       </div>
+
+      {% if page.citation %}
+        <p class="detail__citation">{{ page.citation }}</p>
+      {% endif %}
+
+      {% if page.tags and page.tags.size > 0 %}
+        <ul class="chips">
+          {% for tag in page.tags %}<li>{{ tag }}</li>{% endfor %}
+        </ul>
+      {% endif %}
     </div>
   </div>
 </article>

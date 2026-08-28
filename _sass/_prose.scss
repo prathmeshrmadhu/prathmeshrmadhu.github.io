@@ -130,3 +130,40 @@
 
 // The /research/ intro sits above three row-list bands and needs no top rule.
 .prose--intro { margin-bottom: 0; }
+
+// --- Detail pages --------------------------------------------------------
+
+.detail__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 16px 0 0;
+  font: 400 11px/1.5 $mono;
+  color: $ink-52;
+}
+
+.detail__actions { margin: 24px 0 0; }
+
+.btn--outline {
+  background: none;
+  border: 1px solid $line-strong;
+  color: $ink;
+
+  &:hover {
+    border-color: $accent;
+    color: $accent;
+    filter: none;
+  }
+}
+
+.detail__citation {
+  max-width: $measure;
+  margin: 32px 0 0;
+  padding: 16px 18px;
+  background: $surface;
+  border-radius: $r-metric;
+  font: 400 12.5px/1.65 $mono;
+  color: $ink-60;
+}
+
+.detail .chips { margin-top: 26px; }
