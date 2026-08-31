@@ -3894,7 +3894,81 @@ flashed off-palette on every text drag."
 Three breakpoints: ≥1024, 768–1023, <768. The design's own tables specify these, with H1 dropping to ~38px on mobile.
 
 **Files:**
+- Fix: `_sass/_header.scss` (the mobile menu is broken — see Step 0)
 - Modify: `_sass/_hero.scss`, `_sass/_cards.scss`, `_sass/_layout.scss` (append responsive blocks)
+
+- [ ] **Step 0: Fix the mobile menu, which has never worked**
+
+Found while pre-flighting this task. `_header.scss` ends with:
+
+```scss
+.nav__toggle:checked ~ .nav__list { display: flex; }
+```
+
+`~` is the general **sibling** combinator, but `.nav__list` is not a sibling of the checkbox. The markup in `site-header.html` nests it one level deeper:
+
+```html
+<input class="nav__toggle" type="checkbox" id="nav-toggle">
+<label class="nav__burger" for="nav-toggle">…</label>
+<nav class="nav" aria-label="Main">
+  <ul class="nav__list">…</ul>
+  <a class="pill" href="/contact/">Let's talk</a>
+</nav>
+```
+
+`.nav__list` is a **child of `<nav class="nav">`**, which is the sibling. So the selector matches nothing, and **tapping the burger does nothing on every page at every width below 768px.** The only reachable link on a phone is the `Let's talk` pill. Verified against the compiled CSS (`.nav__toggle:checked ~ .nav__list{display:flex}`) and against the built DOM in `_site/index.html`.
+
+There is a second, related bug. `.nav__list` carries `flex-basis: 100%` and `order: 3`, which were written on the assumption that it is a direct child of `.site-header__inner`. It is not — those declarations resolve against `.nav`, so even with the combinator fixed the list would open as a narrow column beside the pill rather than as a full-width panel.
+
+Fix both. In `_sass/_header.scss`, add a `position: relative` anchor near the top of the file, immediately before `.site-header__inner`:
+
+```scss
+// Positioning context for the mobile nav panel.
+.site-header { position: relative; }
+```
+
+Then replace the mobile `.nav__list` block and the toggle rule inside the existing `@media (max-width: $bp-md - 1px)` query with:
+
+```scss
+  // Full-bleed panel under the bar. Absolute rather than in-flow because
+  // .nav__list is a child of .nav, so flex-basis here would resolve against
+  // .nav (which is just the pill) instead of against the header.
+  .nav__list {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    margin: 0;
+    padding: 0 $inset-sm 8px;
+    background: $ground;
+    border-bottom: 1px solid $line-soft;
+  }
+
+  .nav__list li {
+    width: 100%;
+    border-top: 1px solid $line-soft;
+  }
+
+  .nav__link {
+    display: block;
+    padding: 14px 0;
+    font-size: 13px;
+  }
+
+  // Descendant, not sibling: .nav__list lives inside .nav.
+  .nav__toggle:checked ~ .nav .nav__list { display: flex; }
+```
+
+Delete the old `.nav__toggle:checked ~ .nav__list` rule that sits outside the media query — the replacement above is scoped inside it, which is correct, since above 768px the list must always be visible.
+
+`background: $ground` is required: the panel overlaps page content, and without it the links would render on top of the hero.
+
+**Flag for the visual review, do not resolve here:** at mobile the bar lays out as wordmark / burger / pill under `justify-content: space-between`, which puts the burger in the centre rather than at an edge. That is legible but unusual. It is a placement judgment for the site owner, not a bug.
 
 - [ ] **Step 1: Append the responsive block to `_sass/_hero.scss`**
 
@@ -4022,12 +4096,25 @@ print("grid-template-columns count:", css.count('grid-template-columns'))
 print("media queries:", len(re.findall(r'@media', css)))
 overflow = re.findall(r'overflow\s*:\s*hidden', css)
 print("overflow:hidden guards:", len(overflow))
+
+# Step 0 regression guards. The sibling form matched nothing, so the mobile
+# menu never opened; assert the descendant form shipped and the broken one did not.
+print("toggle uses descendant combinator:",
+      '.nav__toggle:checked ~ .nav .nav__list{display:flex}' in css)
+print("broken sibling form gone:",
+      '.nav__toggle:checked ~ .nav__list{display:flex}' not in css)
+print("header is a positioning context:", '.site-header{position:relative}' in css)
+print("mobile panel has a background:",
+      re.search(r'\.nav__list\{[^}]*position:absolute[^}]*background:#08302[Aa]', css) is not None
+      or re.search(r'\.nav__list\{[^}]*background:#08302[Aa][^}]*position:absolute', css) is not None)
 PY
 ```
 
-Expected: `fixed widths wider than 375px: []`, at least four media queries, and at least one `overflow:hidden` guard (the hero, which clips the glow).
+Expected: `fixed widths wider than 375px: []`, at least four media queries, at least one `overflow:hidden` guard (the hero, which clips the glow), and all four Step 0 lines `True`.
 
 `max-width` declarations are fine at any size — they shrink. It is `width` that overflows.
+
+**If a Step 0 line is `False`, print the actual compiled rule and compare before concluding anything** — minifier spacing and hex casing differ from the source, and that is the usual cause. Report it rather than editing the check.
 
 - [ ] **Step 5: Visual spot-check at the four target widths**
 
@@ -4044,11 +4131,16 @@ Record what you checked. This is success criterion 11 and it cannot be automated
 - [ ] **Step 6: Commit**
 
 ```bash
-git add _sass/_hero.scss _sass/_cards.scss _sass/_layout.scss
+git add _sass/_header.scss _sass/_hero.scss _sass/_cards.scss _sass/_layout.scss
 git commit -m "feat: responsive behaviour at 1024 and 768
 
 Fixes the inherited 500px card-grid breakpoint by using the tokens'
-\$bp-md throughout."
+\$bp-md throughout.
+
+Also fixes the mobile menu, which had never worked: the toggle used
+\`~ .nav__list\`, but .nav__list is a child of <nav>, not a sibling of the
+checkbox, so the selector matched nothing and the burger was inert on every
+page below 768px. Now a descendant selector opening a full-bleed panel."
 ```
 
 ---
