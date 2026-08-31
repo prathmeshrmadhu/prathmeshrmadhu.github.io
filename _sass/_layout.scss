@@ -230,6 +230,11 @@
 @media (max-width: $bp-md - 1px) {
   .band { padding: $band-sm $inset-sm; }
 
+  // The shorthand above resets padding-top, so --tight has to be restated.
+  // It is declared earlier in this file at the same specificity (0,1,0), so
+  // without this every --tight band regains a top pad below 768px.
+  .band--tight { padding-top: 0; }
+
   .page-title { padding: 32px $inset-sm $band-sm; }
 
   .page-title__h1 { font: 700 32px/1.08 $sans; }
@@ -255,8 +260,4 @@
   .row__date { width: 52px; }
 
   .row__title { font-size: 14.5px; }
-
-  .cv { padding: 0 $inset-sm $band-sm; }
-
-  .site-footer { padding: 28px $inset-sm 32px; }
 }

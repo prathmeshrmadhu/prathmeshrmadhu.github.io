@@ -92,3 +92,13 @@
 
 // The row lists at the bottom (publications, talks, teaching).
 .cv .row-list { margin-top: 4px; }
+
+// --- Responsive ----------------------------------------------------------
+// This lives here rather than in _layout.scss's media block: both rules are
+// `.cv` at 0,1,0, and main.scss imports cv AFTER layout. A later
+// unconditional rule beats an earlier media-query one, so the mobile inset
+// only applies from this file.
+
+@media (max-width: $bp-md - 1px) {
+  .cv { padding: 0 $inset-sm $band-sm; }
+}

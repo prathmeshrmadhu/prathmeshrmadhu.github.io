@@ -50,3 +50,12 @@
   font: 400 11px/1.6 $mono;
   color: $ink-52;
 }
+
+// --- Responsive ----------------------------------------------------------
+// Same reason as _cv.scss: main.scss imports footer after layout, so a base
+// `.site-footer` here would override an equal-specificity media-query rule
+// placed in _layout.scss.
+
+@media (max-width: $bp-md - 1px) {
+  .site-footer { padding: 28px $inset-sm 32px; }
+}
