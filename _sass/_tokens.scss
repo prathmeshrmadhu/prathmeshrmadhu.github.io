@@ -34,6 +34,14 @@ $chip:          rgba(244, 242, 237, 0.08);  // chip fill
 $glyph-mute:    rgba(244, 242, 237, 0.25);  // inactive glyph segments
 $grid-line:     rgba(244, 242, 237, 0.04);  // hero blueprint grid
 
+// Paper. Print is a different medium, not a third hue — these are achromatic
+// and are consumed only by _print.scss. Keeping them here preserves the
+// invariant that _tokens.scss holds every hex value in the codebase.
+$paper:      #fff;
+$paper-ink:  #000;
+$paper-mid:  #333;  // demoted metadata — dates, orgs, eyebrows
+$paper-rule: #999;  // hairlines where a border replaces an alpha surface
+
 // Consumed by the retained _reset.scss. Do not rename.
 $background-color: $ground;
 $link-color:       $accent;

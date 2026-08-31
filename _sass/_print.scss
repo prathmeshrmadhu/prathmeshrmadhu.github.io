@@ -1,1 +1,179 @@
-// rewritten in a later task
+// ---------------------------------------------------------------------------
+// Print. The site is the CV — there is no PDF download — so /cv/ must print
+// as black text on white paper, not as a dark rectangle.
+//
+// Every rule that recolours is explicit about its target. `color !important`
+// on an ancestor does NOT override a descendant's own `color` declaration, so
+// any element declaring its own cream value has to be named here or it prints
+// white-on-white. See the audit table in the plan.
+// ---------------------------------------------------------------------------
+
+@media print {
+  html,
+  body {
+    background: $paper !important;
+    color: $paper-ink !important;
+    font-size: 11pt;
+  }
+
+  // Chrome and decoration: gone.
+  .site-header,
+  .site-footer,
+  .skip-link,
+  .nav,
+  .nav__toggle,
+  .nav__burger,
+  .pill,
+  .btn,
+  .hero__glow,
+  .hero__grid,
+  .card__ring,
+  .glyph,
+  .invert,
+  .closing {
+    display: none !important;
+  }
+
+  main { display: block; }
+
+  // Flatten every alpha surface and amber fill to paper.
+  .card,
+  .metric,
+  .detail__citation,
+  .prose pre,
+  .prose code {
+    background: none !important;
+    border: 1px solid $paper-rule !important;
+    border-radius: 0 !important;
+  }
+
+  h1, h2, h3, h4,
+  .page-title__h1,
+  .heading-row__title,
+  .card__title,
+  .cv-role,
+  .row__title,
+  .hero__h1,
+  .prose strong {
+    color: $paper-ink !important;
+  }
+
+  // The amber half of the hero headline.
+  .hero__h1 em { color: $paper-ink !important; }
+
+  p,
+  li,
+  .prose,
+  .card__body,
+  .page-title__lede,
+  .cv-note,
+  .cv ul,
+  .hero__lede,
+  .prose code,
+  .prose .footnotes {
+    color: $paper-ink !important;
+  }
+
+  // Colour cannot carry hierarchy on paper — weight and size must.
+  .kicker,
+  .cv-date,
+  .row-list__year {
+    color: $paper-ink !important;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .cv-org,
+  .row__date,
+  .row__meta,
+  .detail__meta,
+  .cv-cat,
+  .heading-row__eyebrow,
+  .metric__caption,
+  .hero__pill,
+  .prose th {
+    color: $paper-mid !important;
+  }
+
+  .metric__value { color: $paper-ink !important; }
+
+  // Amber status dot in the hero pill.
+  .hero__pill {
+    border-color: $paper-rule !important;
+
+    &::before { background: $paper-mid !important; }
+  }
+
+  .prose blockquote {
+    border-left-color: $paper-rule !important;
+    color: $paper-mid !important;
+  }
+
+  // Syntax highlighting. Nothing matches this today — no content file has a
+  // code fence — but it must not print white-on-white the day one is added.
+  .highlight,
+  .highlighter-rouge .highlight,
+  .highlight * {
+    background: none !important;
+    color: $paper-ink !important;
+  }
+
+  a {
+    color: $paper-ink !important;
+    border-bottom: 0 !important;
+    text-decoration: underline;
+  }
+
+  // Expand external URLs, which are otherwise lost on paper.
+  a[href^="http"]::after,
+  a[href^="mailto:"]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    word-break: break-all;
+  }
+
+  // Chips become plain comma-separated text — filled pills waste ink and
+  // read as boxes.
+  .cv-chips,
+  .chips {
+    display: block;
+    padding: 0;
+  }
+
+  .cv-chips li,
+  .chips li {
+    display: inline;
+    padding: 0;
+    background: none !important;
+    border: 0 !important;
+    border-radius: 0;
+    color: $paper-ink !important;
+
+    &::after { content: ", "; }
+    &:last-child::after { content: ""; }
+  }
+
+  // Never split a CV entry across a page.
+  .cv-date,
+  .cv-role,
+  .cv-org,
+  .cv h2,
+  .card,
+  .row {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .cv-date { break-before: auto; }
+
+  .cv h2 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .band,
+  .page-title,
+  .cv {
+    padding: 0 !important;
+  }
+}
