@@ -2,6 +2,9 @@
 // Header — wordmark, nav, CTA pill, CSS-only mobile menu.
 // ---------------------------------------------------------------------------
 
+// Positioning context for the mobile nav panel.
+.site-header { position: relative; }
+
 .site-header__inner {
   display: flex;
   align-items: center;
@@ -140,13 +143,23 @@
   .nav__burger { display: flex; }
 
   // The pill stays visible in the bar; only the link list collapses.
+  // Full-bleed panel under the bar. Absolute rather than in-flow because
+  // .nav__list is a child of .nav, so flex-basis here would resolve against
+  // .nav (which is just the pill) instead of against the header.
   .nav__list {
     display: none;
-    flex-basis: 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 20;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 0;
-    order: 3;
+    margin: 0;
+    padding: 0 $inset-sm 8px;
+    background: $ground;
+    border-bottom: 1px solid $line-soft;
   }
 
   .nav__list li {
@@ -160,7 +173,8 @@
     font-size: 13px;
   }
 
-  .nav__toggle:checked ~ .nav__list { display: flex; }
+  // Descendant, not sibling: .nav__list lives inside .nav.
+  .nav__toggle:checked ~ .nav .nav__list { display: flex; }
 }
 
 @media (min-width: $bp-md) {

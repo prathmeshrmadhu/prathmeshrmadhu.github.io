@@ -224,3 +224,39 @@
   font: 600 22px/1 $sans;
   letter-spacing: -0.02em;
 }
+
+// --- Responsive ----------------------------------------------------------
+
+@media (max-width: $bp-md - 1px) {
+  .band { padding: $band-sm $inset-sm; }
+
+  .page-title { padding: 32px $inset-sm $band-sm; }
+
+  .page-title__h1 { font: 700 32px/1.08 $sans; }
+
+  .page-title__lede { font-size: 15.5px; }
+
+  .heading-row {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+
+  .heading-row__title { font-size: 22px; }
+
+  .closing {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: $band-sm $inset-sm;
+  }
+
+  .row { gap: 12px; }
+
+  .row__date { width: 52px; }
+
+  .row__title { font-size: 14.5px; }
+
+  .cv { padding: 0 $inset-sm $band-sm; }
+
+  .site-footer { padding: 28px $inset-sm 32px; }
+}

@@ -207,3 +207,30 @@
 
   .card__body { margin-top: 10px; }
 }
+
+// --- Responsive ----------------------------------------------------------
+
+@media (max-width: $bp-lg - 1px) {
+  .capability-grid { grid-template-columns: 1fr 1fr; }
+
+  .work-grid { grid-template-columns: 1fr; }
+
+  .card--work-feature .card__title { font-size: 26px; }
+}
+
+@media (max-width: $bp-md - 1px) {
+  .capability-grid,
+  .work-list,
+  .blog-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card--work-feature {
+    padding: 26px 22px 24px;
+
+    .card__title { font-size: 23px; }
+  }
+
+  // Decorative rings crowd a narrow card.
+  .card__ring { display: none; }
+}

@@ -105,3 +105,31 @@
   font: 400 11px/1.45 $mono;
   color: $ink-55;
 }
+
+// --- Responsive ----------------------------------------------------------
+
+@media (max-width: $bp-lg - 1px) {
+  .hero__inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .hero__h1 { font: 700 48px/1.02 $sans; letter-spacing: -0.03em; }
+}
+
+@media (max-width: $bp-md - 1px) {
+  .hero {
+    padding: 36px $inset-sm 0;
+  }
+
+  .hero__inner { padding-bottom: 36px; }
+
+  .hero__h1 { font: 700 38px/1.05 $sans; letter-spacing: -0.028em; }
+
+  .hero__lede { font-size: 15.5px; }
+
+  .metric { padding: 18px; }
+
+  .metric__value { font-size: 32px; }
+}
