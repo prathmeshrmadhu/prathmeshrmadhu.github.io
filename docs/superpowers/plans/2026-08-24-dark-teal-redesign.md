@@ -4480,21 +4480,51 @@ HIDDEN = ('.site-header', '.site-footer', '.skip-link', '.nav', '.pill', '.btn',
           '.wordmark')
 CREAM = ('rgba(244,242,237', '#f4f2ed', '#f0a202')
 
-def print_names(b):
-    return set(re.findall(r'[.#]?[a-zA-Z][\w-]*', b))
+# Both sides must be tokenised the SAME way. An earlier version of this
+# check extracted the print block's names WITH their leading dot
+# (`[.#]?[a-zA-Z][\w-]*` -> '.cv-date') but the selector's names WITHOUT it
+# (`[\w-]+` -> 'cv-date'), so no class selector could ever match and the
+# check reported every one of them as a leak.
+covered_tokens = set(re.findall(r'[\w-]+', block))
+# Two ways the print block covers an element without naming its class, both
+# of which have to be modelled or the check reports false positives:
+#
+# 1. A universal descendant rule. `.highlight * { color: X !important }`
+#    covers every `.highlight .token` selector.
+# 2. An element-type rule. `a { color: X !important }` covers .row__paper and
+#    .heading-row__link, which are both <a>. Which tag carries a class is not
+#    knowable from the CSS, so it is read out of the built HTML.
+universal_ancestors = set(re.findall(r'\.([\w-]+)\s+\*\s*\{', block))
+elem_rules = set(re.findall(r'(?:^|\})([a-z][a-z0-9]*)\s*\{', block))
 
-covered_tokens = print_names(block)
+tag_of = {}
+for f in pathlib.Path('_site').rglob('*.html'):
+    h = f.read_text(encoding='utf-8', errors='replace')
+    for mm in re.finditer(r'<([a-zA-Z][\w-]*)\b[^>]*class="([^"]*)"', h):
+        for c in mm.group(2).split():
+            tag_of.setdefault(c, set()).add(mm.group(1).lower())
+
 leaks = []
 for mm in re.finditer(r'([^{}]+)\{([^}]*)\}', base):
-    sel, body = mm.group(1).strip(), mm.group(2)
-    if any(x in sel for x in (':hover', 'focus', 'selection')): continue
+    sels, body = mm.group(1), mm.group(2)
     col = [d for d in body.split(';') if re.match(r'\s*color\s*:', d)]
     if not col or not any(c in col[0].lower() for c in CREAM): continue
-    if any(h in sel for h in HIDDEN): continue
-    # every class in the selector's last compound must be named in the print block
-    last = sel.split()[-1]
-    names = [n for n in re.findall(r'[\w-]+', last) if not n.isdigit()]
-    if not any(n in covered_tokens for n in names):
+    # A comma-separated list is many selectors; judge each on its own.
+    for sel in (s.strip() for s in sels.split(',')):
+        if not sel: continue
+        if any(x in sel for x in (':hover', 'focus', 'selection')): continue
+        if any(h in sel for h in HIDDEN): continue
+        compounds = sel.split()
+        # covered by a `.ancestor *` rule?
+        if any(re.sub(r'^\.', '', c) in universal_ancestors for c in compounds[:-1]): continue
+        names = [n for n in re.findall(r'[\w-]+', compounds[-1]) if not n.isdigit()]
+        # covered by an explicit class/element name in the print block?
+        if any(n in covered_tokens for n in names): continue
+        # covered because every element carrying this class is an element type
+        # the print block recolours (e.g. every .row__paper is an <a>)?
+        carriers = set()
+        for n in names: carriers |= tag_of.get(n, set())
+        if carriers and carriers <= elem_rules: continue
         leaks.append((sel, col[0].strip()))
 
 print()
