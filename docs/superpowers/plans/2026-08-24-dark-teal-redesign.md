@@ -4143,6 +4143,25 @@ checkbox, so the selector matched nothing and the burger was inert on every
 page below 768px. Now a descendant selector opening a full-bleed panel."
 ```
 
+- [x] **Step 7 (added during execution): fix three responsive rules that lost the cascade**
+
+Step 3 as written put `.cv`, `.site-footer` and `.band--tight` into `_layout.scss`'s media query. Verified against compiled byte offsets in `_site/assets/css/main.css`: **none of the three ever applied.** Committed as `0811e62`.
+
+| Rule | Why it lost | Fix |
+|---|---|---|
+| `.cv{padding:0 20px 32px}` | `_cv.scss` re-declares `.cv` unconditionally and `main.scss` imports it *after* `layout` | moved into a media query at the end of `_sass/_cv.scss` |
+| `.site-footer{padding:28px 20px 32px}` | same, via `_footer.scss` | moved into a media query at the end of `_sass/_footer.scss` |
+| `.band--tight{padding-top:0}` | declared *earlier* in `_layout.scss` than the mobile `.band` shorthand, which resets `padding-top` | restated inside the media query, after `.band` |
+
+### Recurring defect class #2 — CSS specificity and source order
+
+Alongside the substring-counting trap, this is the second error family that has recurred across tasks (15, 19 ×3). Two rules to apply for the rest of this plan:
+
+1. **A media query does not raise specificity.** An unconditional rule of equal specificity that appears *later* in the concatenated output beats a media-query rule that appears earlier. Responsive overrides must live in the same partial as the base rule they override, or in a partial imported after it.
+2. **Shorthands reset the longhands they contain.** `padding: X Y` wipes any earlier `padding-top`. Restate modifiers that only set a longhand.
+
+Verify by parsing compiled offsets and media-query spans in `_site/assets/css/main.css`, not by reading the SCSS. Import order in `main.scss` is: tokens, reset, base, layout, header, hero, cards, prose, cv, footer, syntax, print.
+
 ---
 
 ## Task 20: Print stylesheet
