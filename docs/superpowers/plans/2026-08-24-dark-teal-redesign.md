@@ -4116,17 +4116,32 @@ Expected: `fixed widths wider than 375px: []`, at least four media queries, at l
 
 **If a Step 0 line is `False`, print the actual compiled rule and compare before concluding anything** — minifier spacing and hex casing differ from the source, and that is the usual cause. Report it rather than editing the check.
 
-- [ ] **Step 5: Visual spot-check at the four target widths**
+- [x] **Step 5: Visual spot-check at the four target widths**
 
-No headless browser is installed, so this step is manual. Serve the built site and resize:
+The plan said this could not be automated. That was wrong — the Claude Preview MCP server drives a real browser. Overflow was measured rather than eyeballed, by loading each route into an iframe sized to the target width so the media queries evaluate against that width.
 
-```bash
-python3 -m http.server 4000 --directory _site
-```
+**Result: 36/36 combinations clean — 9 routes × 4 widths (1440, 1024, 768, 375), zero horizontal overflow.** Routes: `/`, `/work/`, `/research/`, `/blog/`, `/about/`, `/cv/`, `/contact/`, one publication detail, one portfolio detail.
 
-Open `http://localhost:4000/` and check **1440, 1024, 768 and 375 px** for horizontal overflow on all seven routes plus one detail page. Below 768 px, confirm the burger toggles the nav and the `Let's talk` pill stays visible in the bar.
+Mobile nav at 375 px, computed rather than assumed:
 
-Record what you checked. This is success criterion 11 and it cannot be automated here.
+| Check | Result |
+|---|---|
+| `.nav__list` closed → open | `none` → `flex` |
+| Burger visible below 768 / hidden at 768+ | `flex` / `none` |
+| Panel geometry | `left: 0`, full header width, `top` flush with header bottom, `z-index: 20` |
+| Panel background | `rgb(8, 48, 42)` — opaque, no bleed-through |
+| Nav item touch targets | 6 items × 41 px |
+| `Let's talk` pill | visible, and *outside* the panel — stays in the bar when open |
+
+The three cascade fixes verified as *computed* style, not just compiled CSS:
+
+| Element | @375 | @1440 |
+|---|---|---|
+| `.cv` padding | `0 20px 32px` | `0 52px 56px` |
+| `.site-footer` padding | `28px 20px 32px` | `34px 52px 40px` |
+| `.band--tight` padding-top | `0px` | `0px` |
+
+Success criterion 11 is met.
 
 - [ ] **Step 6: Commit**
 
