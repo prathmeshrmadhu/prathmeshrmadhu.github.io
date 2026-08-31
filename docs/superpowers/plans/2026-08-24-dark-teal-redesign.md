@@ -4218,7 +4218,7 @@ Genuinely uncovered, and each one now has a rule below:
 
 `.highlight` currently matches nothing — no content file has a code fence (established in Task 17). It is covered anyway so the stylesheet does not silently break the first time a code block is added.
 
-- [ ] **Step 1a: Append the paper block to `_sass/_tokens.scss`**
+- [x] **Step 1a: Append the paper block to `_sass/_tokens.scss`**
 
 Add at the end of the Colour section, immediately after the `$grid-line` line and before the `// Consumed by the retained _reset.scss` comment:
 
@@ -4232,7 +4232,7 @@ $paper-mid:  #333;  // demoted metadata — dates, orgs, eyebrows
 $paper-rule: #999;  // hairlines where a border replaces an alpha surface
 ```
 
-- [ ] **Step 1b: Write `_sass/_print.scss`**
+- [x] **Step 1b: Write `_sass/_print.scss`**
 
 Full replacement of the placeholder.
 
@@ -4418,7 +4418,7 @@ Full replacement of the placeholder.
 }
 ```
 
-- [ ] **Step 2: Verify the print rules compiled and invert correctly**
+- [x] **Step 2: Verify the print rules compiled and invert correctly**
 
 This is success criterion 6.
 
@@ -4538,17 +4538,60 @@ PY
 
 Expected: every line `PASS`. If `print block found` is `False`, `@import "print"` is missing from `main.scss` — check Task 4 Step 7. If the closed-loop check fails, add the reported selector to the matching group in `_print.scss`; do not weaken the check.
 
-- [ ] **Step 3: Render under print media and confirm nothing is invisible**
+- [x] **Step 3: Render under print media and confirm nothing is invisible**
 
-The controller has a browser available via the Claude Preview MCP server, so this is measured, not eyeballed. Print media cannot be emulated through `preview_eval` alone, but the same result can be had by injecting a stylesheet that re-declares the print block under `media="all"` into an iframe, then reading computed colours.
+**Do not inject the print rules as a second `<style>` element.** That was tried first and gave false results: injected `!important` colour declarations — even an inline `element.style.setProperty('color', x, 'important')` — failed to override the base sheet for anchors and any element whose colour came from a class rule, while a non-colour property (`outline`) injected in the same call applied correctly. A freshly created element responded normally; existing ones did not. The measurements are not reproducible against the spec, so treat cross-sheet colour injection in this environment as unreliable. Separately, `main.css` is served cross-origin here, so `sheet.cssRules` throws a `SecurityError` and any check that enumerates rules from the page silently sees nothing.
 
-Ask the controller to run this. For `/cv/` and one detail page, assert that every text-bearing element resolves to a colour whose luminance is dark enough to read on white — i.e. no element ends up near-white — and that no computed colour is amber.
+The reliable method keeps everything in **one stylesheet, in its original order**: take the compiled `main.css`, unwrap the `@media print { … }` block in place so its rules apply unconditionally at the same position, write it beside the real one, and serve copies of the pages pointing at it.
 
-Success condition: zero elements with a resolved text colour lighter than `#767676` (the WCAG AA threshold against white, 4.54:1), and zero elements resolving to `rgb(240, 162, 2)`.
+```python
+# In _site (gitignored scratch space; _site is root-owned, so run this in a
+# container: docker run --rm -v "$PWD":/srv/jekyll -w /srv/jekyll python:3.11-slim
+import re, pathlib
+css = pathlib.Path('_site/assets/css/main.css').read_text()
+m = re.search(r'@media\s+print', css)
+i = css.index('{', m.start()); j = i + 1; d = 1
+while d and j < len(css):
+    if css[j] == '{': d += 1
+    elif css[j] == '}': d -= 1
+    j += 1
+pathlib.Path('_site/print-test.css').write_text(css[:m.start()] + css[i+1:j-1] + css[j:])
 
-Also confirm structurally: `.cv-chips li` computes `display: inline`, and `.site-header` / `.invert` compute `display: none`.
+def swap(src, dst):
+    h = pathlib.Path(src).read_text()
+    h2 = re.sub(r'href="[^"]*assets/css/main\.css"', 'href="/print-test.css"', h)
+    assert 'print-test.css' in h2 and 'assets/css/main.css' not in h2, f"swap failed: {src}"
+    pathlib.Path(dst).write_text(h2)
 
-- [ ] **Step 4: Commit**
+swap('_site/cv/index.html', '_site/print-test.html')
+swap(str(sorted(pathlib.Path('_site/publication').glob('*.html'))[1]), '_site/print-test-detail.html')
+swap('_site/index.html', '_site/print-test-home.html')
+```
+
+**Assert the swap on every page.** The first attempt asserted only on `/cv/`; the detail page silently kept `main.css` and reported a teal background, which read as a stylesheet failure rather than a scripting mistake. Also note `jekyll serve --watch` will regenerate over these files, so re-check with `curl` immediately before measuring.
+
+Then, for each page, walk `body *`, keep elements with their own non-empty text node and no hidden ancestor, and read computed `color` and `backgroundColor`.
+
+**Result — all three pages pass:**
+
+| | `/cv/` | detail | `/` |
+|---|---|---|---|
+| `body` background | `rgb(255,255,255)` | `rgb(255,255,255)` | `rgb(255,255,255)` |
+| text colours present | `#000` ×90, `#333` ×34 | `#000` ×7, `#333` ×1 | `#000` ×37, `#333` ×6 |
+| amber elements | 0 | 0 | 0 |
+| below 4.5:1 on white | 0 | 0 | 0 |
+| unflattened backgrounds | 0 | 0 | 0 |
+| `.site-header` / `.site-footer` | none | none | none |
+| `.invert` / `.glyph` / `.card__ring` | absent | absent | none |
+| chips | `.cv-chips li` inline | — | `.chips li` inline |
+
+Every text element resolves to `#000` (21:1 on white) or `#333` (12.6:1). Nothing is invisible and no amber survives.
+
+**Not verified:** the `break-inside: avoid` / `page-break-*` rules. Those only take effect during real pagination, which a viewport render cannot exercise. The declarations are present in the compiled CSS (asserted in Step 2), but whether a CV entry actually splits across a sheet of paper is left to the human review gate.
+
+Remember to delete `_site/print-test*` afterwards.
+
+- [x] **Step 4: Commit**
 
 ```bash
 git add _sass/_tokens.scss _sass/_print.scss
