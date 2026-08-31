@@ -4184,9 +4184,55 @@ Verify by parsing compiled offsets and media-query spans in `_site/assets/css/ma
 Someone will press Ctrl+P on `/cv/` — the site **is** the CV, there is no PDF download. A dark-teal page prints as a black rectangle, or with backgrounds suppressed, as cream text on white paper. Neither is acceptable, so this is a required deliverable.
 
 **Files:**
+- Modify: `_sass/_tokens.scss` (append the paper block)
 - Rewrite: `_sass/_print.scss`
 
-- [ ] **Step 1: Write `_sass/_print.scss`**
+### Corrections made to this task before execution
+
+An audit of the compiled base CSS against the print block as originally drafted found two problems. Both are fixed in the steps below.
+
+**(a) Raw hex.** The draft put `#fff`, `#000`, `#999` and `#333` directly in `_print.scss`. Since Task 18, `_tokens.scss` holds the only hex values in the codebase. Paper is a different *medium*, not a third hue — the tokens rule is about the screen palette — but the values still belong in the tokens file. Added as a `$paper-*` block.
+
+**(b) Eleven uncovered rule groups — the serious one.** `color: X !important` on a parent does **not** override a child element's own `color` declaration; the child's own declaration still wins for the child. So every element that declares its own cream or amber colour and is not *explicitly* named in the print block keeps that colour on paper. Cream on white is invisible.
+
+Audit method: extract the unconditional (non-`@media`) rules from `_site/assets/css/main.css`, keep those declaring their own `color` in cream (`#F4F2ED` / `rgba(244,242,237,…)`) or amber (`#F0A202`), drop anything hidden by an ancestor or only styled on `:hover`/`:focus`, then diff against the print block's selector list.
+
+Already covered, no action needed — `!important` beats the child's non-important declaration where the selector genuinely matches the element, or the element sits inside a hidden ancestor: `.chips li`, `.cv-chips li`, `.cv ul:not([class])`, `.wordmark` (inside `.site-header`), `.wordmark__mark`, `.prose h2/h3/h4` (matched by the bare `h2, h3, h4` group), `.card--work-feature .card__body`, `.card--work-feature` background (matched by `.card`), `.row__paper` and `.heading-row__link` (both `<a>`).
+
+Genuinely uncovered, and each one now has a rule below:
+
+| Selector | Declares | Prints as |
+|---|---|---|
+| `.hero__pill` | `color: $ink-72` | invisible |
+| `.hero__pill::before` | `background: $accent` | amber dot |
+| `.hero__h1 em` | `color: $accent` | amber — half the headline |
+| `.hero__lede` | `color: $ink-70` | invisible |
+| `.metric__caption` | `color: $ink-55` | invisible |
+| `.row-list__year` | `color: $accent` | amber — appears on `/cv/` |
+| `.prose strong` | `color: $ink` | invisible |
+| `.prose blockquote` | `color: $ink-60` + amber border | invisible + amber rule |
+| `.prose code` | `color: $ink` + alpha fill | invisible |
+| `.prose th` | `color: $ink-52` | invisible |
+| `.prose .footnotes` | `color: $ink-60` | invisible |
+| `.highlight` + token classes | cream and amber | invisible / amber |
+
+`.highlight` currently matches nothing — no content file has a code fence (established in Task 17). It is covered anyway so the stylesheet does not silently break the first time a code block is added.
+
+- [ ] **Step 1a: Append the paper block to `_sass/_tokens.scss`**
+
+Add at the end of the Colour section, immediately after the `$grid-line` line and before the `// Consumed by the retained _reset.scss` comment:
+
+```scss
+// Paper. Print is a different medium, not a third hue — these are achromatic
+// and are consumed only by _print.scss. Keeping them here preserves the
+// invariant that _tokens.scss holds every hex value in the codebase.
+$paper:      #fff;
+$paper-ink:  #000;
+$paper-mid:  #333;  // demoted metadata — dates, orgs, eyebrows
+$paper-rule: #999;  // hairlines where a border replaces an alpha surface
+```
+
+- [ ] **Step 1b: Write `_sass/_print.scss`**
 
 Full replacement of the placeholder.
 
@@ -4194,13 +4240,18 @@ Full replacement of the placeholder.
 // ---------------------------------------------------------------------------
 // Print. The site is the CV — there is no PDF download — so /cv/ must print
 // as black text on white paper, not as a dark rectangle.
+//
+// Every rule that recolours is explicit about its target. `color !important`
+// on an ancestor does NOT override a descendant's own `color` declaration, so
+// any element declaring its own cream value has to be named here or it prints
+// white-on-white. See the audit table in the plan.
 // ---------------------------------------------------------------------------
 
 @media print {
   html,
   body {
-    background: #fff !important;
-    color: #000 !important;
+    background: $paper !important;
+    color: $paper-ink !important;
     font-size: 11pt;
   }
 
@@ -4228,9 +4279,10 @@ Full replacement of the placeholder.
   .card,
   .metric,
   .detail__citation,
-  .prose pre {
+  .prose pre,
+  .prose code {
     background: none !important;
-    border: 1px solid #999 !important;
+    border: 1px solid $paper-rule !important;
     border-radius: 0 !important;
   }
 
@@ -4239,9 +4291,14 @@ Full replacement of the placeholder.
   .heading-row__title,
   .card__title,
   .cv-role,
-  .row__title {
-    color: #000 !important;
+  .row__title,
+  .hero__h1,
+  .prose strong {
+    color: $paper-ink !important;
   }
+
+  // The amber half of the hero headline.
+  .hero__h1 em { color: $paper-ink !important; }
 
   p,
   li,
@@ -4249,14 +4306,18 @@ Full replacement of the placeholder.
   .card__body,
   .page-title__lede,
   .cv-note,
-  .cv ul {
-    color: #000 !important;
+  .cv ul,
+  .hero__lede,
+  .prose code,
+  .prose .footnotes {
+    color: $paper-ink !important;
   }
 
   // Colour cannot carry hierarchy on paper — weight and size must.
   .kicker,
-  .cv-date {
-    color: #000 !important;
+  .cv-date,
+  .row-list__year {
+    color: $paper-ink !important;
     font-weight: 700;
     letter-spacing: 0.08em;
   }
@@ -4266,14 +4327,38 @@ Full replacement of the placeholder.
   .row__meta,
   .detail__meta,
   .cv-cat,
-  .heading-row__eyebrow {
-    color: #333 !important;
+  .heading-row__eyebrow,
+  .metric__caption,
+  .hero__pill,
+  .prose th {
+    color: $paper-mid !important;
   }
 
-  .metric__value { color: #000 !important; }
+  .metric__value { color: $paper-ink !important; }
+
+  // Amber status dot in the hero pill.
+  .hero__pill {
+    border-color: $paper-rule !important;
+
+    &::before { background: $paper-mid !important; }
+  }
+
+  .prose blockquote {
+    border-left-color: $paper-rule !important;
+    color: $paper-mid !important;
+  }
+
+  // Syntax highlighting. Nothing matches this today — no content file has a
+  // code fence — but it must not print white-on-white the day one is added.
+  .highlight,
+  .highlighter-rouge .highlight,
+  .highlight * {
+    background: none !important;
+    color: $paper-ink !important;
+  }
 
   a {
-    color: #000 !important;
+    color: $paper-ink !important;
     border-bottom: 0 !important;
     text-decoration: underline;
   }
@@ -4299,8 +4384,9 @@ Full replacement of the placeholder.
     display: inline;
     padding: 0;
     background: none !important;
+    border: 0 !important;
     border-radius: 0;
-    color: #000 !important;
+    color: $paper-ink !important;
 
     &::after { content: ", "; }
     &:last-child::after { content: ""; }
@@ -4336,49 +4422,115 @@ Full replacement of the placeholder.
 
 This is success criterion 6.
 
+The original regex here (`@media print\{(.*?)\}(?=@media|$)`) does not brace-match, so it truncates the block at its first nested `}`. Replaced with a real brace matcher. The second half is the check that matters: it re-derives the uncovered-selector list from the compiled CSS, so it keeps working as the stylesheet changes rather than hard-coding today's answer.
+
 ```bash
 jbuild() { docker run --rm -v "$PWD":/srv/jekyll -v jekyll_gems:/usr/local/bundle -w /srv/jekyll ruby:3.2 bash -c "bundle install --quiet && bundle exec jekyll build"; }
 jbuild
 python3 - <<'PY'
 import re, pathlib
 css = pathlib.Path('_site/assets/css/main.css').read_text()
-blocks = re.findall(r'@media print\{(.*?)\}(?=@media|$)', css, re.S)
-block = max(blocks, key=len) if blocks else ''
+
+def block_at(start):
+    i = css.index('{', start) + 1
+    d = 1
+    while d and i < len(css):
+        if css[i] == '{': d += 1
+        elif css[i] == '}': d -= 1
+        i += 1
+    return css[css.index('{', start) + 1:i - 1]
+
+m = re.search(r'@media\s+print', css)
+block = block_at(m.start()) if m else ''
 print("print block found:", bool(block), "chars:", len(block))
+
 checks = {
-    "white ground": '#fff' in block,
-    "black text": '#000' in block,
-    "header hidden": '.site-header' in block,
+    "white ground":                '#fff' in block,
+    "black text":                  '#000' in block,
+    "header hidden":               '.site-header' in block,
     "inverted amber block hidden": '.invert' in block,
-    "glow hidden": 'hero__glow' in block,
-    "rings hidden": 'card__ring' in block,
-    "url expansion": 'attr(href)' in block,
-    "chips inlined": 'cv-chips' in block,
-    "break-inside guard": 'break-inside' in block,
-    "no teal ground survives": '#08302a' not in block.lower(),
+    "glow hidden":                 'hero__glow' in block,
+    "rings hidden":                'card__ring' in block,
+    "url expansion":               'attr(href)' in block,
+    "chips inlined":               'cv-chips' in block,
+    "break-inside guard":          'break-inside' in block,
+    "no teal ground survives":     '08302a' not in block.lower(),
+    "no amber survives":           'f0a202' not in block.lower(),
 }
 for k, v in checks.items():
     print(("PASS " if v else "FAIL ") + k)
+
+# --- Closed loop: no element may keep its own cream/amber colour on paper. ---
+spans = []
+for mm in re.finditer(r'@media[^{]*\{', css):
+    d, i = 1, mm.end()
+    while d and i < len(css):
+        if css[i] == '{': d += 1
+        elif css[i] == '}': d -= 1
+        i += 1
+    spans.append((mm.start(), i))
+parts, prev = [], 0
+for a, b in spans:
+    parts.append(css[prev:a]); prev = b
+parts.append(css[prev:])
+base = ''.join(parts)
+
+HIDDEN = ('.site-header', '.site-footer', '.skip-link', '.nav', '.pill', '.btn',
+          '.hero__glow', '.hero__grid', '.card__ring', '.glyph', '.invert', '.closing',
+          '.wordmark')
+CREAM = ('rgba(244,242,237', '#f4f2ed', '#f0a202')
+
+def print_names(b):
+    return set(re.findall(r'[.#]?[a-zA-Z][\w-]*', b))
+
+covered_tokens = print_names(block)
+leaks = []
+for mm in re.finditer(r'([^{}]+)\{([^}]*)\}', base):
+    sel, body = mm.group(1).strip(), mm.group(2)
+    if any(x in sel for x in (':hover', 'focus', 'selection')): continue
+    col = [d for d in body.split(';') if re.match(r'\s*color\s*:', d)]
+    if not col or not any(c in col[0].lower() for c in CREAM): continue
+    if any(h in sel for h in HIDDEN): continue
+    # every class in the selector's last compound must be named in the print block
+    last = sel.split()[-1]
+    names = [n for n in re.findall(r'[\w-]+', last) if not n.isdigit()]
+    if not any(n in covered_tokens for n in names):
+        leaks.append((sel, col[0].strip()))
+
+print()
+if leaks:
+    print(f"FAIL {len(leaks)} selectors keep a cream/amber colour on paper:")
+    for s, c in leaks: print(f"     {s}  ->  {c}")
+else:
+    print("PASS no selector keeps a cream or amber colour on paper")
 PY
 ```
 
-Expected: every line `PASS`. If `print block found` is `False`, `@import "print"` is missing from `main.scss` — check Task 4 Step 7.
+Expected: every line `PASS`. If `print block found` is `False`, `@import "print"` is missing from `main.scss` — check Task 4 Step 7. If the closed-loop check fails, add the reported selector to the matching group in `_print.scss`; do not weaken the check.
 
-- [ ] **Step 3: Eyeball the print preview**
+- [ ] **Step 3: Render under print media and confirm nothing is invisible**
 
-```bash
-python3 -m http.server 4000 --directory _site
-```
+The controller has a browser available via the Claude Preview MCP server, so this is measured, not eyeballed. Print media cannot be emulated through `preview_eval` alone, but the same result can be had by injecting a stylesheet that re-declares the print block under `media="all"` into an iframe, then reading computed colours.
 
-Open `http://localhost:4000/cv/`, press Ctrl+P, and confirm: white paper, black text, no amber block, skills as comma-separated text rather than pills, and no CV entry split across a page boundary. Do the same on one detail page.
+Ask the controller to run this. For `/cv/` and one detail page, assert that every text-bearing element resolves to a colour whose luminance is dark enough to read on white — i.e. no element ends up near-white — and that no computed colour is amber.
+
+Success condition: zero elements with a resolved text colour lighter than `#767676` (the WCAG AA threshold against white, 4.54:1), and zero elements resolving to `rgb(240, 162, 2)`.
+
+Also confirm structurally: `.cv-chips li` computes `display: inline`, and `.site-header` / `.invert` compute `display: none`.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add _sass/_print.scss
+git add _sass/_tokens.scss _sass/_print.scss
 git commit -m "feat: print stylesheet inverting the dark ground to paper
 
-The site is the CV, so Ctrl+P on /cv/ has to produce something usable."
+The site is the CV, so Ctrl+P on /cv/ has to produce something usable.
+
+Every element that declares its own cream colour is named explicitly:
+color !important on an ancestor does not override a descendant's own
+color declaration, so eleven selectors would otherwise have printed
+white-on-white, including .hero__lede, .prose strong, .prose blockquote
+and .metric__caption."
 ```
 
 ---
