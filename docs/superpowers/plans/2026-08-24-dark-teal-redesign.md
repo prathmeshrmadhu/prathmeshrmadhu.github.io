@@ -3690,7 +3690,11 @@ zero content."
 
 ## Task 18: Delete the Minimal Mistakes visual layer
 
-Everything the new system replaced. This is where the CSS size criterion is won.
+Everything the new system replaced.
+
+**Correction to the original framing, recorded after execution.** This task was described as "where the CSS size criterion is won". It is not. The win was banked earlier, when `assets/css/main.scss` was rewritten to import only the twelve new partials — that orphaned the Minimal Mistakes partials and the three vendor libraries immediately, so they stopped being compiled long before they stopped existing. Measured: `main.css` was already **20,903** bytes going into this task, against the 102,456 baseline. Deleting 143 files of dead source changed it by **+12 bytes** (to 20,915), because `#08302A`/`#F0A202` are longer strings than `#fff`/`#000`.
+
+So the real value of this task is removing 14,920 lines of dead source that would otherwise mislead every future reader of the repo, plus the `::selection` fix in Step 4b. The byte budget still passes with ~4.7 KB of headroom. **Report the reduction honestly at the Task 21 review gate: it belongs to the `main.scss` rewrite, not to this deletion.**
 
 **Files:** see the delete list in "File structure" above.
 
