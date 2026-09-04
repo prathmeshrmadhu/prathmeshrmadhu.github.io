@@ -71,9 +71,11 @@ social:
   links: # An array of links to social media profiles
 
 
-# Analytics
+# Analytics. Off: the tracking_id was always empty, and Universal Analytics was
+# shut down in July 2023, so the snippet fetched google-analytics.com on every
+# page load and did nothing with it. Phase 4 ships zero JavaScript.
 analytics:
-  provider               :  "google-universal" # false (default), "google", "google-universal", "custom"
+  provider               :  false # false (default), "google", "google-universal", "custom"
   google:
     tracking_id          :
 

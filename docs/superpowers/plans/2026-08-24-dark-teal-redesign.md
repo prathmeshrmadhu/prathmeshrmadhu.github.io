@@ -4615,7 +4615,20 @@ Run all seventeen success criteria against a clean build. Every criterion here i
 **Files:**
 - Create: `docs/superpowers/plans/verification-2026-08-24.txt` (the recorded result)
 
-- [ ] **Step 1: Clean build**
+### Corrections made to this task before execution
+
+Four criteria were pre-flighted against the clean build before the assertion block was run. Three were genuinely wrong; the fourth turned out to be a false alarm and is recorded here so it is not "fixed" into a worse state later.
+
+| # | Criterion | Finding | Action |
+|---|---|---|---|
+| a | 7 — derived counts | `home.count('class="row')` returns **13**, not 3. It is the substring trap again (8th instance): `class="row` is a prefix of `row-list`, `row__date`, `row__main` and `row__title`. | Anchored on the tag: `home.count('<li class="row')` → **3**. |
+| b | 1 — page count | The build has **53** pages, but one of them is `posts/2026/03/31/work-love/index.html`, generated from the **untracked** draft `_posts/2026-05-03-work-love.md`. The live site would have **52**. | Assertion keeps 53 (it runs against the local build) but now derives the expected number from tracked posts and prints both figures, so the discrepancy is visible rather than silent. |
+| c | 5 — contrast | `MINT = (155, 212, 180)` and the `code strings (mint)` row are dead. Task 17 rewrote `_syntax.scss` to tokens only; `grep` for `155,212,180` in the compiled CSS returns nothing, and the only hexes in the sheet are the two hues, the ink, and the four achromatic `$paper-*` print tokens. Measuring a colour that is not shipped is worse than not measuring — it reports a PASS for nothing. | `MINT` and its row deleted. Pass 2 already measures every ink alpha that actually ships, which is the authoritative check. |
+| d0 | 15 — zero javascript | **Two real JS sources found, both fixed.** (1) The theme shipped the Universal Analytics snippet on all 53 pages — `provider: "google-universal"` with an **empty** `tracking_id`, fetching `google-analytics.com/analytics.js` on every page load and doing nothing with it. UA was shut down in July 2023. Set `analytics.provider: false` in `_config.yml`, the config's own documented off-switch. (2) The 8 `jekyll-redirect-from` stubs each carried an inline `location=` assignment. Added `_layouts/redirect.html`; the generator honours a user-supplied layout (`unless site.layouts.key?("redirect")`). The stubs still redirect via a 0-second meta refresh, `rel="canonical"`, and a visible link, so nothing is lost without JS. Added criterion **15b** asserting all 8 stubs keep those three fallbacks. | Fixed, not exempted. Site now ships literally zero JS. |
+| d1 | 5 — contrast pass 2 | **My own regex bug.** `color:\s*rgba\(` also matches `background-color:` and `border-color:`, so pass 2 pulled in `$surface-hover` (0.03) and `$line-hover` (0.28) and reported two false AA failures — a background tint and a border, neither of which is text. This is precisely the false positive the step's own closing note warned about. Anchored the property: `[;{]\s*color:\s*rgba\(…`, plus an assert that the anchor did not match nothing. | Shipped text alphas are now exactly `[0.52, 0.55, 0.60, 0.62, 0.64, 0.68, 0.70, 0.72]`, all ≥ 4.54. |
+| d2 | 17 — row metadata | **False alarm.** The concern was that `_talks` and `_teaching` render on `/cv/`, making a check against `research/index.html` a coincidental substring pass. Verified: `/research/` has `<h2>` sections for Publications, Talks *and* Teaching, and 26 `<li class="row` rows = 21 + 3 + 2. All talk and teaching `type`/`venue`/`location` values render there as real rows. `/cv/` carries only **5** of the 21 publications, so checking `res` is not just correct, it is the *stricter* of the two. | **No change.** Criterion 17 stands as written. |
+
+- [x] **Step 1: Clean build**
 
 ```bash
 jclean() { docker run --rm -v "$PWD":/srv/jekyll -w /srv/jekyll ruby:3.2 bash -c "rm -rf _site"; }
@@ -4625,7 +4638,7 @@ jclean && jbuild
 
 Expected: `done in N seconds.` with zero warnings about missing layouts or includes. **Criterion 1, part one.**
 
-- [ ] **Step 2: Run criteria 1–4 and 7–16**
+- [x] **Step 2: Run criteria 1–4 and 7–16**
 
 ```bash
 python3 - <<'PY' | tee docs/superpowers/plans/verification-2026-08-24.txt
@@ -4639,8 +4652,17 @@ results = []
 def check(n, desc, ok, detail=''):
     results.append((n, desc, ok, detail))
 
-# 1 — page count
-check(1, "exactly 53 html pages", len(pages) == 53, f"got {len(pages)}")
+# 1 — page count. 53 locally, but one page comes from the untracked draft
+# _posts/2026-05-03-work-love.md, so the live site would serve 52. Derive both
+# so the gap is visible instead of hiding inside a magic number.
+import subprocess
+tracked_posts = set(subprocess.run(['git','ls-files','_posts/'], capture_output=True,
+                                   text=True).stdout.split())
+all_posts = {p.as_posix() for p in pathlib.Path('_posts').glob('*.md')}
+untracked_posts = sorted(all_posts - tracked_posts)
+check(1, "exactly 53 html pages locally (52 tracked + untracked drafts)",
+      len(pages) == 53 and len(untracked_posts) == 1,
+      f"got {len(pages)} built; untracked drafts={untracked_posts} -> live would be {len(pages) - len(untracked_posts)}")
 
 # 2 — internal links. GitHub Pages serves extensionless URLs, so try three
 # forms; and match both root-relative and absolute hrefs.
@@ -4671,7 +4693,9 @@ check(4, "no theme residue in built html", all(v == 0 for v in residue.values())
 home = html_all[root / 'index.html']
 pubs = len(list(pathlib.Path('_publications').glob('*.md')))
 work = len(list(pathlib.Path('_portfolio').glob('*.md')))
-home_rows = home.count('class="row')
+# Anchor on the tag. `class="row` is a prefix of row-list, row__date, row__main
+# and row__title, so the bare count returns 13 on a page with 3 rows.
+home_rows = home.count('<li class="row')
 check(7, "derived counts hold", pubs == 21 and work == 6 and home_rows == 3,
       f"pubs={pubs} work={work} home_rows={home_rows}")
 
@@ -4764,7 +4788,7 @@ PY
 
 Expected: `failed: none`. Criteria 5, 6 and 11 are covered separately in Steps 3–5.
 
-- [ ] **Step 3: Criterion 5 — contrast, measured against the compiled CSS**
+- [x] **Step 3: Criterion 5 — contrast, measured against the compiled CSS**
 
 Do not trust the spec's numbers, and do not trust this plan's numbers either. The criterion says **re-measured against the compiled CSS**, so this runs in two passes: named design pairs first, then every ink alpha the compiled stylesheet actually declares as a `color`.
 
@@ -4788,7 +4812,9 @@ def ratio(a, b):
 GROUND = (8, 48, 42)
 INK    = (244, 242, 237)
 AMBER  = (240, 162, 2)
-MINT   = (155, 212, 180)
+# No MINT. Task 17 rewrote _syntax.scss to tokens only — 155,212,180 does not
+# appear in the compiled sheet, so measuring it would report a PASS for a colour
+# that is not shipped. Pass 2 below measures what actually ships.
 
 rows = [
     ("H1 / hero title",      INK,   1.00, GROUND, 3.0),
@@ -4800,7 +4826,6 @@ rows = [
     ("card body (60)",       INK,   0.60, GROUND, 4.5),
     ("metric caption (55)",  INK,   0.55, GROUND, 4.5),
     ("date/eyebrow (52)",    INK,   0.52, GROUND, 4.5),
-    ("code strings (mint)",  MINT,  1.00, GROUND, 4.5),
 ]
 bad = []
 for name, fg, a, bg, need in rows:
@@ -4842,28 +4867,42 @@ Pass 2 is the authoritative check. **If it flags an alpha, raise the value in `_
 
 Two known false positives to judge rather than blindly fix: `$line`, `$line-soft` and friends are borders, not text, and if any of them ever appears in a `color:` declaration it is a genuine bug worth finding. Large text (≥24px or ≥18.66px bold) legitimately needs only 3:1 — if pass 2 flags an alpha used *exclusively* on an H1 or H2, record the exemption in the verification file with the selector named.
 
-- [ ] **Step 4: Criterion 6 — print**
+- [x] **Step 4: Criterion 6 — print**
 
 Already asserted in Task 20 Step 2. Re-run that assertion block against the clean build and record the result.
 
-- [ ] **Step 5: Criterion 11 — no horizontal overflow**
+- [x] **Step 5: Criterion 11 — no horizontal overflow**
 
-Manual. Serve the site and check all seven routes plus one detail page at 1440, 1024, 768 and 375 px.
+**The plan called this manual. It is not** — same correction as Task 19 Step 5. Load each page in a fixed-width iframe and compare `documentElement.scrollWidth` with `clientWidth`, then scan every element in `body` for a bounding-rect right edge past the viewport so a failure names the culprit instead of just reporting a number.
+
+**Serve with `python3 -m http.server`, never `jekyll serve`.** Jekyll's watcher regenerates `_site` and does **not** reload `_config.yml`, so a serve process started before a config edit silently rebuilds pages with its startup config. That is how the analytics snippet came back after it had already been verified gone — twice. A `static` config was added to `.claude/launch.json` for this.
 
 ```bash
-python3 -m http.server 4000 --directory _site
+nohup python3 -m http.server 4001 --directory _site >/tmp/httpd.log 2>&1 &
 ```
+
+Note that `http.server` does not serve extensionless URLs the way GitHub Pages does: publication details are `/publication/<slug>.html`, while portfolio and post details are directories with an `index.html`.
+
+**Result: 11 pages × 4 widths (1440, 1024, 768, 375) = 44 measurements, 44 PASS, 0 FAIL.** `scrollWidth == clientWidth` everywhere. The 15px gap between iframe width and reported width is the scrollbar gutter; `/404.html` is short enough to have no vertical scrollbar and reports the full width.
 
 Append what you checked, and any overflow found, to `docs/superpowers/plans/verification-2026-08-24.txt`.
 
-- [ ] **Step 6: Commit the verification record**
+- [x] **Step 5b: Remove the scratch harness**
+
+The criteria block lives in `.verify-phase4.py` at the repo root so it can be re-run after each fix rather than re-pasted. It is scratch, not site source, and must not be committed.
+
+```bash
+rm .verify-phase4.py
+```
+
+- [x] **Step 6: Commit the verification record**
 
 ```bash
 git add docs/superpowers/plans/verification-2026-08-24.txt
 git commit -m "docs: record Phase 4 verification results"
 ```
 
-- [ ] **Step 7: Push the branch**
+- [x] **Step 7: Push the branch**
 
 Plain `git push` fails — it authenticates as the wrong GitHub account.
 
@@ -4873,7 +4912,7 @@ GIT_SSH_COMMAND="ssh -F /dev/null -o IdentitiesOnly=yes -o StrictHostKeyChecking
 
 Expected: the branch is created on the remote. **Do not push to `master` and do not merge.** `master` is what GitHub Pages serves.
 
-- [ ] **Step 8: Hand off for visual review — STOP HERE**
+- [x] **Step 8: Hand off for visual review — STOP HERE**
 
 Report to the user:
 

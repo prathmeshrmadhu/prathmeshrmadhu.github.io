@@ -1,0 +1,94 @@
+PHASE 4 VERIFICATION — Task 21
+========================================================================
+[PASS]   1. 53 html pages locally (52 tracked + 1 untracked draft)
+           53 built; untracked=['_posts/2026-05-03-work-love.md'] -> live=52
+[PASS]   2. zero broken internal links
+           []
+[PASS]   3. main.css under 25KB
+           24436 bytes (was 102456)
+[PASS]   4. no theme residue in built html
+           {'author_profile': 0, 'page__content': 0, 'fa-': 0, 'susy': 0, 'magnific': 0}
+[PASS]   5. contrast: named pairs and every shipped ink alpha meet AA
+           named_failures=none shipped_below_AA=none; alphas=[0.52, 0.55, 0.6, 0.62, 0.64, 0.68, 0.7, 0.72]
+[PASS]   6. print stylesheet: paper colours only, live hues gone, chrome hidden
+           none
+[PASS]   7. derived counts hold
+           pubs=21 work=6 home_rows=3
+[PASS]   8. 320+ exactly once in source, no hardcoded paper count
+           count=1 in ['_config.yml'], no hardcoded 27: True
+[PASS]   9. banned service-offering copy absent
+           {'advisory': 0, 'practice areas': 0, 'what i can build for you': 0, 'open to collaboration': 0}
+[PASS]  10. /about/ resolves and nothing else claims it
+           ['about/index.html']
+[PASS]  12. 36 detail pages via detail.html
+           got 36
+[PASS]  13. two families, four woff2, no third-party font requests
+           ['jetbrains-mono-latin-ext.woff2', 'jetbrains-mono-latin.woff2', 'space-grotesk-latin-ext.woff2', 'space-grotesk-latin.woff2'], third_party=False
+[PASS]  14. zero image requests in the body of /
+           found []
+[PASS]  15. zero javascript
+           js=[] scripts=[] ga_refs=0
+[PASS]  16. research intro prose survives
+           2349 chars
+[PASS]  17. row metadata complete
+           meta=[] paper=[]
+[PASS] 15b. 8 redirect stubs redirect without JS (meta refresh + link + canonical)
+           []
+------------------------------------------------------------------------
+CONTRAST DETAIL (criterion 5)
+  [PASS] H1 / hero title        12.80 (need 3.0)
+  [PASS] amber on teal          6.73 (need 3.0)
+  [PASS] lede (ink-70)          7.00 (need 4.5)
+  [PASS] feature body (68)      6.69 (need 4.5)
+  [PASS] chip label (64)        6.10 (need 4.5)
+  [PASS] nav (62)               5.82 (need 4.5)
+  [PASS] card body (60)         5.54 (need 4.5)
+  [PASS] metric caption (55)    4.90 (need 4.5)
+  [PASS] date/eyebrow (52)      4.54 (need 4.5)
+  [PASS] contact H2 on amber    6.73 (need 3.0)
+  [PASS] contact body on amber  4.94 (need 4.5)
+  [PASS] shipped alpha 0.52  4.54 (need 4.5)
+  [PASS] shipped alpha 0.55  4.90 (need 4.5)
+  [PASS] shipped alpha 0.6   5.54 (need 4.5)
+  [PASS] shipped alpha 0.62  5.82 (need 4.5)
+  [PASS] shipped alpha 0.64  6.10 (need 4.5)
+  [PASS] shipped alpha 0.68  6.69 (need 4.5)
+  [PASS] shipped alpha 0.7   7.00 (need 4.5)
+  [PASS] shipped alpha 0.72  7.32 (need 4.5)
+------------------------------------------------------------------------
+PRINT DETAIL (criterion 6)
+  print block: 1901 bytes, problems=none
+========================================================================
+failed: none
+
+------------------------------------------------------------------------
+CRITERION 11 — HORIZONTAL OVERFLOW (Task 21 Step 5)
+
+Automated, not eyeballed. The plan called this step "manual"; it is not. Each
+page was loaded in a fixed-width iframe and documentElement.scrollWidth was
+compared with clientWidth, plus a scan of every element in body for a
+bounding-rect right edge past the viewport.
+
+11 pages x 4 widths (1440, 1024, 768, 375) = 44 measurements. 44 PASS, 0 FAIL.
+
+Pages: /, /work/, /research/, /blog/, /about/, /cv/, /contact/, /404.html,
+a publication detail, a portfolio detail, a post detail.
+
+scrollWidth == clientWidth on all 44. The 15px gap between the iframe width and
+the reported width (e.g. 1440 -> 1425) is the scrollbar gutter; /404.html has no
+vertical scrollbar and so reports the full width. No element's right edge
+exceeded its viewport by more than 1px on any page at any width.
+
+Served from a read-only `python3 -m http.server --directory _site`, NOT
+`jekyll serve`. See the note in .claude/launch.json: jekyll's watcher
+regenerates _site without reloading _config.yml, which twice silently rebuilt
+pages using a stale config and reintroduced the analytics snippet.
+
+------------------------------------------------------------------------
+NOT VERIFIED BY MACHINE — REQUIRES A HUMAN
+
+- Print pagination. `break-inside: avoid` / `page-break-*` cannot be exercised
+  without real pagination. Colour, chrome-hiding and background-flattening in
+  the print block ARE verified (criterion 6 and Task 20 Step 3). The page-break
+  behaviour needs an actual Ctrl+P on /cv/.
+- Whether the site looks good. Every criterion above is structural.

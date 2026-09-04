@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<!--
+  Overrides the built-in template from jekyll-redirect-from. Its only purpose is
+  to drop that template's one inline script line, a `location=` assignment.
+  Phase 4 ships zero JavaScript, and these eight stubs were the last of it.
+
+  Do not write that tag name literally in this comment: the verification sweep
+  greps built HTML for the opening script tag, and a mention inside a comment
+  reads as a real one. That false positive already cost one debugging round.
+
+  Nothing is lost by dropping it. The plugin's own template already carried a
+  zero-delay meta refresh and a visible fallback link, so the redirect works
+  identically without JS. Search engines treat a 0-second meta refresh as a
+  permanent redirect, and rel="canonical" states the target explicitly.
+
+  These stubs preserve the pre-Phase-2 URLs — /portfolio/, /publications/,
+  /talks/, /teaching/, /resume.html, /year-archive/, /wordpress/blog-posts/ and
+  one old post permalink. Do not delete them; they are the only thing keeping
+  inbound links alive.
+-->
+<html lang="{{ site.locale | default: 'en-US' }}">
+  <head>
+    <meta charset="utf-8">
+    <title>Redirecting&hellip;</title>
+    <link rel="canonical" href="{{ page.redirect.to }}">
+    <meta http-equiv="refresh" content="0; url={{ page.redirect.to }}">
+    <meta name="robots" content="noindex">
+  </head>
+  <body>
+    <h1>Redirecting&hellip;</h1>
+    <a href="{{ page.redirect.to }}">Click here if you are not redirected.</a>
+  </body>
+</html>
