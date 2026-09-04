@@ -63,7 +63,7 @@
 }
 
 .nav__link {
-  font: 500 12px/1 $mono;
+  font: 500 14px/1 $mono;
   color: $ink-62;
   transition: $t-color;
 
@@ -153,7 +153,7 @@
   .nav__link {
     display: block;
     padding: 14px 0;
-    font-size: 13px;
+    font-size: 15px;
   }
 
   // Descendant, not sibling: .nav__list lives inside .nav.
