@@ -5,7 +5,8 @@ PHASE 4 VERIFICATION — Task 21
 [PASS]   2. zero broken internal links
            []
 [PASS]   3. main.css under 25KB
-           24436 bytes (was 102456)
+           24116 bytes (was 102456)
+           24436 before the .pill block was removed; the removal saved 320.
 [PASS]   4. no theme residue in built html
            {'author_profile': 0, 'page__content': 0, 'fa-': 0, 'susy': 0, 'magnific': 0}
 [PASS]   5. contrast: named pairs and every shipped ink alpha meet AA
@@ -65,24 +66,73 @@ failed: none
 CRITERION 11 — HORIZONTAL OVERFLOW (Task 21 Step 5)
 
 Automated, not eyeballed. The plan called this step "manual"; it is not. Each
-page was loaded in a fixed-width iframe and documentElement.scrollWidth was
-compared with clientWidth, plus a scan of every element in body for a
-bounding-rect right edge past the viewport.
+page was loaded in a fixed-width iframe, then the iframe was resized through the
+four widths and documentElement.scrollWidth compared with the iframe width,
+plus a scan of every element for a bounding-rect right edge past the viewport.
 
-11 pages x 4 widths (1440, 1024, 768, 375) = 44 measurements. 44 PASS, 0 FAIL.
+11 pages x 4 widths (1440, 1024, 768, 375) = 44 measurements.
+44 styled=true, 44 overflow=0, 0 FAIL.
 
 Pages: /, /work/, /research/, /blog/, /about/, /cv/, /contact/, /404.html,
-a publication detail, a portfolio detail, a post detail.
+/publication/2023-01-01-sniffyart-the-dataset-of-smelling-persons.html,
+/portfolio/agentic-systems-in-a-regulated-domain/,
+/posts/2026/03/31/information-overload/.
 
-scrollWidth == clientWidth on all 44. The 15px gap between the iframe width and
-the reported width (e.g. 1440 -> 1425) is the scrollbar gutter; /404.html has no
-vertical scrollbar and so reports the full width. No element's right edge
-exceeded its viewport by more than 1px on any page at any width.
+Nav behaviour fell out of the same run and is consistent on all 11 pages:
+  1440 / 1024 / 768  ->  .nav__burger display:none,  .nav__list display:flex
+  375                ->  .nav__burger display:flex,  .nav__list display:none
 
-Served from a read-only `python3 -m http.server --directory _site`, NOT
-`jekyll serve`. See the note in .claude/launch.json: jekyll's watcher
-regenerates _site without reloading _config.yml, which twice silently rebuilt
-pages using a stale config and reintroduced the analytics snippet.
+*** THE MEASUREMENT MUST PROVE ITS OWN PRECONDITION ***
+
+The first version of this section claimed 44/44 PASS and was WRONG. It was
+measured against `python3 -m http.server --directory _site`, and the built HTML
+hardcodes the absolute production URL on every asset (site.url is set, so
+base_path resolves to https://prathmeshrmadhu.github.io). Serving _site directly
+loads NO stylesheet — the browser fetches CSS from the live site, which was
+unreachable. Every element therefore sat at its UA default, nothing could
+overflow, and all 44 results were meaningless. The tell was
+getComputedStyle(body).backgroundColor === 'rgba(0, 0, 0, 0)' and
+.nav__list display:'block'.
+
+The re-run serves /tmp/site-local — a copy of _site with the absolute site URL
+stripped so all URLs are root-relative (launch.json config "local", port 4002) —
+and every single measurement asserts
+getComputedStyle(body).backgroundColor === 'rgb(8, 48, 42)'
+before its scrollWidth is recorded. A frame that fails the assertion is
+reported as UNSTYLED, not as a pass. Zero frames were UNSTYLED.
+
+Not `jekyll serve`, in either run. See the note in .claude/launch.json: jekyll's
+watcher regenerates _site without reloading _config.yml, which twice silently
+rebuilt pages using a stale config and reintroduced the analytics snippet.
+
+Batching note: the preview eval tool times out at 30s and each page costs ~4.5s,
+so this runs one page per call. Leftover iframes from a timed-out call slow the
+renderer until removed.
+
+------------------------------------------------------------------------
+POST-REVIEW CHANGES (from the Task 21 review gate)
+
+Two of the eight review items were acted on. Re-verified against a clean build:
+
+  nav de-duplication ("remove Let's talk and keep contacts")
+    .pill in built home html : 0
+    .pill in main.css        : 0   (block deleted from _sass/_header.scss,
+                                    and from the _base.scss reduced-motion
+                                    and _print.scss display:none groups)
+    .nav__link in home       : 6
+    /contact/ links in home  : 2   (nav + the closing contact band)
+
+  publication venue fields ("clean 21 fields by hand")
+    files scanned            : 21
+    remaining problems       : none
+    Scanned for: an ellipsis (Scholar truncation), a page range, a leftover
+    "Proceedings of the " prefix. Each of the 14 edited files was fixed in the
+    `citation:` field too, not just `venue:`. The five genuinely truncated
+    venues were completed against DBLP / ACM DL / Springer, not guessed.
+
+The other six items were "no action" by decision: print pagination deferred to
+release, the untracked draft left alone, sparse posts / talks ordering / mobile
+burger placement all accepted as-is.
 
 ------------------------------------------------------------------------
 NOT VERIFIED BY MACHINE — REQUIRES A HUMAN

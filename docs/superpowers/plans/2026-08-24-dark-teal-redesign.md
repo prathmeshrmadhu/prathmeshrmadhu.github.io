@@ -4877,13 +4877,29 @@ Already asserted in Task 20 Step 2. Re-run that assertion block against the clea
 
 **Serve with `python3 -m http.server`, never `jekyll serve`.** Jekyll's watcher regenerates `_site` and does **not** reload `_config.yml`, so a serve process started before a config edit silently rebuilds pages with its startup config. That is how the analytics snippet came back after it had already been verified gone — twice. A `static` config was added to `.claude/launch.json` for this.
 
+**But do NOT serve `_site` itself for a layout measurement.** `site.url` is set, so `base_path` resolves to the absolute production URL and the built HTML hardcodes `https://prathmeshrmadhu.github.io` on every asset. Served locally, the browser fetches the stylesheet from the live site and gets nothing — the page renders completely unstyled, so nothing can overflow and every measurement is a meaningless pass. That is exactly what happened on the first run of this step: all 44 results were invalid and had to be thrown away.
+
+Serve a URL-stripped copy instead (`local` config in `.claude/launch.json`, port 4002):
+
 ```bash
-nohup python3 -m http.server 4001 --directory _site >/tmp/httpd.log 2>&1 &
+rm -rf /tmp/site-local && cp -r _site /tmp/site-local
+grep -rl 'https://prathmeshrmadhu.github.io' /tmp/site-local \
+  | xargs sed -i 's|https://prathmeshrmadhu\.github\.io||g'
 ```
+
+**Every frame must assert its own precondition before its number is recorded:**
+
+```js
+getComputedStyle(d.body).backgroundColor === 'rgb(8, 48, 42)'
+```
+
+Poll for this — `iframe.onload` fires before styles apply. A frame that never satisfies it is reported `UNSTYLED`, never as a pass. Do not drive the top-level page with `location.href`; that destroys the eval context ("Inspected target navigated or closed"). Resize one iframe through the four widths rather than reloading per width: one load per page instead of four.
 
 Note that `http.server` does not serve extensionless URLs the way GitHub Pages does: publication details are `/publication/<slug>.html`, while portfolio and post details are directories with an `index.html`.
 
-**Result: 11 pages × 4 widths (1440, 1024, 768, 375) = 44 measurements, 44 PASS, 0 FAIL.** `scrollWidth == clientWidth` everywhere. The 15px gap between iframe width and reported width is the scrollbar gutter; `/404.html` is short enough to have no vertical scrollbar and reports the full width.
+The preview eval tool times out at 30s and each page costs ~4.5s — run **one page per call**. Leftover iframes from a timed-out call keep rendering and slow every subsequent call until removed.
+
+**Result: 11 pages × 4 widths (1440, 1024, 768, 375) = 44 measurements, all `styled=true`, all `overflow=0`, 0 FAIL.** The same run confirms the mobile nav: burger `none` / list `flex` at 1440–768, burger `flex` / list `none` at 375, on all 11 pages.
 
 Append what you checked, and any overflow found, to `docs/superpowers/plans/verification-2026-08-24.txt`.
 
