@@ -114,7 +114,6 @@ a {
 // Drop the transforms, keep the colour transitions. Do not blanket-disable
 // every transition here — the design relies on colour feedback for hover.
 @media (prefers-reduced-motion: reduce) {
-  .pill:hover,
   .btn:hover,
   .card:hover {
     transform: none;

@@ -1,5 +1,7 @@
 # Main navigation. Order is from the Phase 4 spec: Work, Research, Blog,
-# About, CV, Contact. The amber "Let's talk" pill also points at /contact/.
+# About, CV, Contact. Contact is the only route to /contact/ — the amber
+# "Let's talk" pill that used to sit beside this list was removed as a
+# duplicate link to the same page.
 main:
   - title: "Work"
     url: /work/

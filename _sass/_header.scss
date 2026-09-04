@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Header — wordmark, nav, CTA pill, CSS-only mobile menu.
+// Header — wordmark, nav, CSS-only mobile menu.
 // ---------------------------------------------------------------------------
 
 // Positioning context for the mobile nav panel.
@@ -72,22 +72,6 @@
   &[aria-current="page"] { color: $ink; }
 }
 
-.pill {
-  padding: 8px 13px;
-  background: $accent;
-  color: $ground;
-  border-radius: 20px;
-  font: 500 12px/1 $mono;
-  white-space: nowrap;
-  transition: transform $t-lift, filter $t-lift;
-
-  &:hover {
-    color: $ground;
-    transform: translateY(-1px);
-    filter: brightness(1.08);
-  }
-}
-
 // --- Mobile menu ---------------------------------------------------------
 
 .nav__toggle {
@@ -142,10 +126,9 @@
 
   .nav__burger { display: flex; }
 
-  // The pill stays visible in the bar; only the link list collapses.
   // Full-bleed panel under the bar. Absolute rather than in-flow because
   // .nav__list is a child of .nav, so flex-basis here would resolve against
-  // .nav (which is just the pill) instead of against the header.
+  // .nav rather than against the header.
   .nav__list {
     display: none;
     position: absolute;
