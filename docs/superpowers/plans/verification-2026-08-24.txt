@@ -1,7 +1,9 @@
 PHASE 4 VERIFICATION — Task 21
 ========================================================================
-[PASS]   1. 53 html pages locally (52 tracked + 1 untracked draft)
-           53 built; untracked=['_posts/2026-05-03-work-love.md'] -> live=52
+[PASS]   1. 52 html pages, local == live
+           Was 53 built / 52 live: the extra page was the untracked draft
+           _posts/2026-05-03-work-love.md. It now carries published: false,
+           so local and live agree at 52. See POST-REVIEW ROUND 2 below.
 [PASS]   2. zero broken internal links
            []
 [PASS]   3. main.css under 25KB
@@ -21,8 +23,10 @@ PHASE 4 VERIFICATION — Task 21
            {'advisory': 0, 'practice areas': 0, 'what i can build for you': 0, 'open to collaboration': 0}
 [PASS]  10. /about/ resolves and nothing else claims it
            ['about/index.html']
-[PASS]  12. 36 detail pages via detail.html
-           got 36
+[PASS]  12. 35 detail pages via detail.html
+           got 35. Was 36; the hidden draft was one of them. Counted by the
+           layout's own wrapper, `<article class="detail"`, not by a guessed
+           class name.
 [PASS]  13. two families, four woff2, no third-party font requests
            ['jetbrains-mono-latin-ext.woff2', 'jetbrains-mono-latin.woff2', 'space-grotesk-latin-ext.woff2', 'space-grotesk-latin.woff2'], third_party=False
 [PASS]  14. zero image requests in the body of /
@@ -133,6 +137,37 @@ Two of the eight review items were acted on. Re-verified against a clean build:
 The other six items were "no action" by decision: print pagination deferred to
 release, the untracked draft left alone, sparse posts / talks ordering / mobile
 burger placement all accepted as-is.
+
+------------------------------------------------------------------------
+POST-REVIEW ROUND 2 (after the first visual look at the merged site)
+
+Three changes, all re-verified against a clean build:
+
+  wordmark: "P.R. MADHU" -> "Prathmesh Madhu, PhD"
+    old string in build : 0
+    new string in build : 44  (= 52 pages - 8 redirect stubs, which have no
+                               header; so every real page carries it once)
+    Renders on one line at every width down to 320px: 182px wide, 18px tall.
+
+  nav link font: 12px -> 14px desktop, 13px -> 15px mobile
+    Global, not home-only — the header is one include on every page.
+    Mobile menu rows grew 41px -> 43px tall, plus the 1px li border = 44px,
+    which is the touch-target guideline rather than just under it.
+    CSS size unchanged at 24116 (a digit swap, no new rules).
+
+  draft post hidden
+    _posts/2026-05-03-work-love.md now has `published: false`.
+    work-love in built html / /blog/ / feed.xml : 0 / 0 / 0
+    /blog/ still renders 3 cards.
+
+  Overflow re-checked, because a larger nav font and a longer wordmark are
+  exactly what breaks a header at narrow widths:
+    /         @ 1440, 1024, 768, 600, 480, 375, 320  -> ov=0 at all seven
+    /research/@ 1440, 768, 375, 320                  -> ov=0
+    /cv/      @ 1440, 768, 375, 320                  -> ov=0
+    Mobile menu open at 375: 6 rows, panel 360px, ov=0.
+  At 768 the header needs 182 + 20 + 382 = 584px of the 728px available, so
+  there is real headroom left before the nav has to break.
 
 ------------------------------------------------------------------------
 NOT VERIFIED BY MACHINE — REQUIRES A HUMAN
